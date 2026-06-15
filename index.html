@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -134,7 +134,7 @@ a{text-decoration:none}
 .urg .it{color:var(--red)}.opp .it{color:var(--tel-d)}.pos .it{color:#166534}.wrn .it{color:#92400e}
 .im{font-family:'Sora',sans-serif;font-size:20px;font-weight:800;color:var(--nvy);margin:4px 0}
 .ix{font-size:12px;line-height:1.5;color:var(--txt)}
-/* Srch */
+/* Search */
 .srch{padding:6px 10px;border:1.5px solid var(--bdr);border-radius:7px;font-size:12px;font-family:inherit;width:148px;outline:none;background:var(--bg);color:var(--txt);transition:border-color .15s}
 .srch:focus{border-color:var(--gld);background:#fff}
 /* Password gate */
@@ -152,6 +152,11 @@ a{text-decoration:none}
 /* Section head */
 .sh{margin-bottom:12px}
 .sh .ct{margin-bottom:0}
+/* Filter chips */
+.cf{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}
+.cf-chip{display:inline-flex;align-items:center;padding:3px 10px;border-radius:11px;font-size:10.5px;font-weight:600;cursor:pointer;border:1.5px solid;transition:all .12s;user-select:none;line-height:1.5}
+.cf-chip:hover{opacity:.8}
+.cf-chip.off{opacity:.28;text-decoration:line-through}
 /* Misc */
 .pg-ft{text-align:center;padding:16px 22px;font-size:10.5px;color:var(--mut);border-top:1px solid var(--bdr);margin-top:8px}
 .ham{display:none;background:none;border:none;cursor:pointer;padding:6px;color:var(--nvy);flex-shrink:0;align-items:center;justify-content:center}
@@ -184,7 +189,7 @@ a{text-decoration:none}
   .btn-ol{display:none}
 }
 @media(max-width:380px){.kpi-row{grid-template-columns:1fr}}
-@media print{.sidebar,.tb-r,.tbr,.pw-gate,.srch,.ham,.sb-overlay{display:none!important}.main{margin-left:0}.topbar{position:static;box-shadow:none}}
+@media print{.sidebar,.tb-r,.tbr,.pw-gate,.srch,.ham,.sb-overlay,.cf{display:none!important}.main{margin-left:0}.topbar{position:static;box-shadow:none}}
 </style>
 </head><body>
 <!-- Password Gate -->
@@ -285,11 +290,19 @@ a{text-decoration:none}
   <div class="fcc c60"><div class="fc-lbl">&#128197; Days 31&ndash;60</div><div class="fc-num">1</div><div class="fc-val">$480,000</div><div class="fc-sub">Closing by Aug 14</div></div>
   <div class="fcc c90"><div class="fc-lbl">&#128198; Days 61&ndash;90</div><div class="fc-num">2</div><div class="fc-val">$697,000</div><div class="fc-sub">Closing by Sep 13</div></div>
   <div class="fcc cuc"><div class="fc-lbl">&#128293; Under Contract Now</div><div class="fc-num">43</div><div class="fc-val">$14,909,439</div><div class="fc-sub">Active contracts in pipeline</div></div>
-</div><!-- Funnel + Revenue Donut -->
+</div>
+<!-- Funnel + Revenue Donut -->
 <div id="funnel"></div>
 <div class="g65">
-  <div class="card"><div class="ch"><div><div class="ct">Pipeline Stage Funnel</div><div class="cs">All 6,021 contacts by current stage</div></div></div><div id="fnViz"></div></div>
-  <div class="card"><div class="ch"><div><div class="ct">Revenue by Stage</div><div class="cs">$121.8M total pipeline value</div></div></div><div style="position:relative;height:270px"><canvas id="revDonut"></canvas></div></div>
+  <div class="card">
+    <div class="ch"><div><div class="ct">Pipeline Stage Funnel</div><div class="cs">Click stages below to add or remove from view</div></div></div>
+    <div id="fnViz"></div>
+  </div>
+  <div class="card">
+    <div class="ch"><div><div class="ct">Revenue by Stage</div><div class="cs">Click stages below to compare revenue</div></div></div>
+    <div id="revChips" class="cf"></div>
+    <div style="position:relative;height:230px"><canvas id="revDonut"></canvas></div>
+  </div>
 </div>
 <!-- Agent Performance -->
 <div id="agents" class="fw"><div class="card">
@@ -321,8 +334,15 @@ a{text-decoration:none}
 <!-- Lead Sources + Buyer Readiness -->
 <div id="sources"></div>
 <div class="g2">
-  <div class="card"><div class="ch"><div><div class="ct">Lead Sources</div><div class="cs">6,021 contacts by origin</div></div></div><div style="position:relative;height:230px"><canvas id="srcChart"></canvas></div></div>
-  <div class="card" id="readiness"><div class="ch"><div><div class="ct">Buyer Readiness</div><div class="cs">2,485 contacts with purchase timeframe</div></div></div><div style="position:relative;height:230px"><canvas id="rdChart"></canvas></div></div>
+  <div class="card">
+    <div class="ch"><div><div class="ct">Lead Sources</div><div class="cs">Click sources to add or remove from chart</div></div></div>
+    <div id="srcChips" class="cf"></div>
+    <div style="position:relative;height:200px"><canvas id="srcChart"></canvas></div>
+  </div>
+  <div class="card" id="readiness">
+    <div class="ch"><div><div class="ct">Buyer Readiness</div><div class="cs">2,485 contacts with purchase timeframe</div></div></div>
+    <div style="position:relative;height:230px"><canvas id="rdChart"></canvas></div>
+  </div>
 </div>
 <!-- Monthly Trends -->
 <div id="trends"></div>
@@ -330,7 +350,12 @@ a{text-decoration:none}
   <div class="card"><div class="ch"><div><div class="ct">Monthly Closings</div><div class="cs">Deals closed per month (2025&ndash;2026)</div></div></div><div style="position:relative;height:210px"><canvas id="clChart"></canvas></div></div>
   <div class="card"><div class="ch"><div><div class="ct">New Leads Added</div><div class="cs">Contacts added per month (2024&ndash;2026)</div></div></div><div style="position:relative;height:210px"><canvas id="lkChart"></canvas></div></div>
 </div>
-<div class="card fw"><div class="ch"><div><div class="ct">Agent Performance Comparison</div><div class="cs">Active pipeline (bars) vs contact rate (line) &mdash; top 15 agents by active pipeline</div></div></div><div style="position:relative;height:290px"><canvas id="agBarChart"></canvas></div></div>
+<!-- Agent Comparison -->
+<div class="card fw">
+  <div class="ch"><div><div class="ct">Agent Performance Comparison</div><div class="cs">Active pipeline (bars) vs contact rate (line) &mdash; click chips to add or remove agents</div></div></div>
+  <div id="agBarChips" class="cf"></div>
+  <div style="position:relative;height:280px"><canvas id="agBarChart"></canvas></div>
+</div>
 <!-- Insights -->
 <div id="insights" class="fw">
   <div class="sh" style="margin-bottom:12px"><div class="ct">Actionable Insights</div><div class="cs">Key findings from pipeline analysis</div></div>
@@ -420,23 +445,100 @@ function swAnalysis(a){
   if(a.cr<30)wkn.push({t:'Critical Contact Gap',d:a.cr+'% contact rate — urgent intervention needed'});
   else if(a.cr<50)wkn.push({t:'Contact Rate Lag',d:a.cr+'% vs '+teamCr+'% team average'});
   if(nr>0.55&&a.tl>30)wkn.push({t:'Nurture-Heavy',d:(nr*100).toFixed(0)+'% of leads stuck in nurture stage'});
-  if(ar>0.3)wkn.push({t:'Stalled Outreach',d:a.atmp+' leads in Attempted Contact ('+( ar*100).toFixed(0)+'%)'});
+  if(ar>0.3)wkn.push({t:'Stalled Outreach',d:a.atmp+' leads in Attempted Contact ('+(ar*100).toFixed(0)+'%)'});
   if(a.cd===0&&a.tl>=20)wkn.push({t:'No Closings Yet',d:a.tl+' leads, 0 closed — focus on conversion'});
   if(a.apv===0&&a.tl>=20)wkn.push({t:'No Active Pipeline',d:'No priced active deals currently'});
   if((a.calls+a.texts)<15&&a.tl>=30)wkn.push({t:'Low Logged Activity',d:'Only '+(a.calls+a.texts)+' recorded activities'});
   return{str:str.slice(0,3),wkn:wkn.slice(0,2)};
 }
-// Chart builders
+
+// ── Stage Funnel ──────────────────────────────────────────────────────────────
+const fnColorMap={'s0':'#6B7897','s1':'#4A6FA5','s2':'#3A5F9C','s3':'#5B8DB8','s4':'#2EC4B6','s5':'#1A9E92','s6':'#C9A84C','s7':'#E0953A','s8':'#E06830','s9':'#C04040','s10':'#4CAF50','s11':'#2E7D32'};
+let fnActive=new Set(D.st.map(s=>s.n));
+
 function buildFn(){
-  const mx=Math.max(...D.st.map(s=>s.c));
-  document.getElementById('fnViz').innerHTML=D.st.map(s=>`<div class="fn-row"><div class="fn-lbl">${s.n}</div><div class="fn-trk"><div class="fn-fill ${s.s}" style="width:${(s.c/mx*100).toFixed(1)}%">${s.c>80?fm(s.c):''}</div></div><div class="fn-cnt">${fm(s.c)}</div></div>`).join('');
+  const chips=D.st.map(s=>{
+    const c=fnColorMap[s.s]||'#6B7897',off=!fnActive.has(s.n);
+    return `<span class="cf-chip${off?' off':''}" style="border-color:${c};color:${off?'#aaa':c};background:${off?'transparent':c+'1a'}" onclick="toggleFn('${s.n.replace(/'/g,"\\'")}')">${s.n}</span>`;
+  }).join('');
+  const filt=D.st.filter(s=>fnActive.has(s.n));
+  const mx=Math.max(...filt.map(s=>s.c),1);
+  const bars=filt.length>0
+    ?filt.map(s=>`<div class="fn-row"><div class="fn-lbl">${s.n}</div><div class="fn-trk"><div class="fn-fill ${s.s}" style="width:${(s.c/mx*100).toFixed(1)}%">${s.c>80?fm(s.c):''}</div></div><div class="fn-cnt">${fm(s.c)}</div></div>`).join('')
+    :'<div style="padding:24px;text-align:center;color:var(--mut);font-size:12px">Select at least one stage above</div>';
+  document.getElementById('fnViz').innerHTML=`<div class="cf" style="margin-bottom:14px">${chips}</div>${bars}`;
 }
+
+function toggleFn(name){
+  if(fnActive.has(name))fnActive.delete(name);else fnActive.add(name);
+  buildFn();
+}
+
+// ── Revenue by Stage ──────────────────────────────────────────────────────────
+const revColors=['#2E7D32','#E06830','#4A6FA5','#C9A84C','#2EC4B6','#6B7897'];
+let revActive=new Set(D.sr.l);
+let revChart=null;
+
+function renderRevChips(){
+  const el=document.getElementById('revChips');if(!el)return;
+  el.innerHTML=D.sr.l.map((l,i)=>{
+    const c=revColors[i],off=!revActive.has(l);
+    return `<span class="cf-chip${off?' off':''}" style="border-color:${c};color:${off?'#aaa':c};background:${off?'transparent':c+'1a'}" onclick="toggleRev('${l.replace(/'/g,"\\'")}'">${l}</span>`;
+  }).join('');
+}
+
 function buildRevDonut(){
-  new Chart(document.getElementById('revDonut'),{type:'doughnut',data:{labels:D.sr.l,datasets:[{data:D.sr.v,backgroundColor:['#2E7D32','#E06830','#4A6FA5','#C9A84C','#2EC4B6','#6B7897'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,cutout:'64%',plugins:{legend:{position:'right',labels:{font:{size:11,family:"'DM Sans',sans-serif"},boxWidth:11,padding:8}},tooltip:{callbacks:{label:c=>' '+c.label+': '+fd(c.raw)}}}}});
+  renderRevChips();
+  const filt=D.sr.l.map((l,i)=>({l,v:D.sr.v[i],c:revColors[i]})).filter(x=>revActive.has(x.l));
+  if(revChart)revChart.destroy();
+  revChart=new Chart(document.getElementById('revDonut'),{type:'doughnut',data:{labels:filt.map(x=>x.l),datasets:[{data:filt.map(x=>x.v),backgroundColor:filt.map(x=>x.c),borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,cutout:'64%',plugins:{legend:{position:'right',labels:{font:{size:11,family:"'DM Sans',sans-serif"},boxWidth:11,padding:8}},tooltip:{callbacks:{label:c=>' '+c.label+': '+fd(c.raw)}}}}});
 }
+
+function toggleRev(name){
+  if(revActive.has(name))revActive.delete(name);else revActive.add(name);
+  renderRevChips();
+  const filt=D.sr.l.map((l,i)=>({l,v:D.sr.v[i],c:revColors[i]})).filter(x=>revActive.has(x.l));
+  if(revChart){
+    revChart.data.labels=filt.map(x=>x.l);
+    revChart.data.datasets[0].data=filt.map(x=>x.v);
+    revChart.data.datasets[0].backgroundColor=filt.map(x=>x.c);
+    revChart.update('none');
+  }
+}
+
+// ── Lead Sources ──────────────────────────────────────────────────────────────
+const srcColors=['#0D1B2A','#4A6FA5','#2EC4B6','#C9A84C','#6B7897'];
+let srcActive=new Set(D.ls.l);
+let srcChartInst=null;
+
+function renderSrcChips(){
+  const el=document.getElementById('srcChips');if(!el)return;
+  el.innerHTML=D.ls.l.map((l,i)=>{
+    const c=srcColors[i],off=!srcActive.has(l);
+    return `<span class="cf-chip${off?' off':''}" style="border-color:${c};color:${off?'#aaa':c};background:${off?'transparent':c+'1a'}" onclick="toggleSrc('${l.replace(/'/g,"\\'")}'">${l}</span>`;
+  }).join('');
+}
+
 function buildSrc(){
-  new Chart(document.getElementById('srcChart'),{type:'doughnut',data:{labels:D.ls.l,datasets:[{data:D.ls.v,backgroundColor:['#0D1B2A','#4A6FA5','#2EC4B6','#C9A84C','#6B7897'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{position:'right',labels:{font:{size:11,family:"'DM Sans',sans-serif"},boxWidth:11,padding:6}},tooltip:{callbacks:{label:c=>' '+c.label+': '+fm(c.raw)+' ('+(c.raw/6021*100).toFixed(1)+'%)'}}}}});
+  renderSrcChips();
+  const filt=D.ls.l.map((l,i)=>({l,v:D.ls.v[i],c:srcColors[i]})).filter(x=>srcActive.has(x.l));
+  if(srcChartInst)srcChartInst.destroy();
+  srcChartInst=new Chart(document.getElementById('srcChart'),{type:'doughnut',data:{labels:filt.map(x=>x.l),datasets:[{data:filt.map(x=>x.v),backgroundColor:filt.map(x=>x.c),borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{position:'right',labels:{font:{size:11,family:"'DM Sans',sans-serif"},boxWidth:11,padding:6}},tooltip:{callbacks:{label:c=>' '+c.label+': '+fm(c.raw)+' ('+(c.raw/6021*100).toFixed(1)+'%)'}}}}});
 }
+
+function toggleSrc(name){
+  if(srcActive.has(name))srcActive.delete(name);else srcActive.add(name);
+  renderSrcChips();
+  const filt=D.ls.l.map((l,i)=>({l,v:D.ls.v[i],c:srcColors[i]})).filter(x=>srcActive.has(x.l));
+  if(srcChartInst){
+    srcChartInst.data.labels=filt.map(x=>x.l);
+    srcChartInst.data.datasets[0].data=filt.map(x=>x.v);
+    srcChartInst.data.datasets[0].backgroundColor=filt.map(x=>x.c);
+    srcChartInst.update('none');
+  }
+}
+
+// ── Other charts (non-filterable) ────────────────────────────────────────────
 function buildRd(){
   new Chart(document.getElementById('rdChart'),{type:'bar',data:{labels:D.tf.l,datasets:[{data:D.tf.v,backgroundColor:['#2E7D32','#4CAF50','#C9A84C','#F59E0B','#E05252'],borderRadius:5,borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',scales:{x:{grid:{color:'rgba(0,0,0,.04)'},ticks:{font:{size:11}}},y:{grid:{display:false},ticks:{font:{size:11,family:"'DM Sans',sans-serif"}}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+fm(c.raw)+' contacts'}}}}});
 }
@@ -449,12 +551,45 @@ function buildLk(){
   g.addColorStop(0,'rgba(46,196,182,.22)');g.addColorStop(1,'rgba(46,196,182,0)');
   new Chart(ctx,{type:'line',data:{labels:D.lk.lb,datasets:[{data:D.lk.d,borderColor:'#2EC4B6',backgroundColor:g,borderWidth:2.5,pointRadius:2,fill:true,tension:0.4}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{grid:{display:false},ticks:{font:{size:10},maxTicksLimit:10,maxRotation:45}},y:{grid:{color:'rgba(0,0,0,.04)'},ticks:{font:{size:11}}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.raw+' new contacts'}}}}});
 }
-function buildAgBar(){
-  const t=D.ag.filter(a=>a.apv>0).slice(0,15);
-  const lbl=t.map(a=>{const p=a.n.split(' ');return p[0][0]+'. '+(p[1]||'');});
-  new Chart(document.getElementById('agBarChart'),{type:'bar',data:{labels:lbl,datasets:[{label:'Active Pipeline ($M)',data:t.map(a=>+(a.apv/1e6).toFixed(2)),backgroundColor:t.map((_,i)=>COL[i%COL.length]+'CC'),borderColor:t.map((_,i)=>COL[i%COL.length]),borderWidth:1.5,yAxisID:'y',borderRadius:3},{label:'Contact Rate (%)',data:t.map(a=>a.cr),type:'line',borderColor:'#E2C276',backgroundColor:'rgba(201,168,76,.1)',borderWidth:2.5,pointRadius:4,pointBackgroundColor:'#C9A84C',yAxisID:'y1',tension:0.3}]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},scales:{y:{type:'linear',position:'left',grid:{color:'rgba(0,0,0,.04)'},ticks:{callback:v=>'$'+v+'M',font:{size:11}}},y1:{type:'linear',position:'right',min:0,max:100,grid:{drawOnChartArea:false},ticks:{callback:v=>v+'%',font:{size:11}}},x:{grid:{display:false},ticks:{font:{size:10},maxRotation:30}}},plugins:{legend:{position:'top',labels:{font:{size:11,family:"'DM Sans',sans-serif"},boxWidth:12,padding:12}}}}});
+
+// ── Agent Performance Comparison ──────────────────────────────────────────────
+const allAgBarAgents=D.ag.filter(a=>a.apv>0);
+let agBarActive=new Set(allAgBarAgents.slice(0,15).map(a=>a.n));
+let agBarChartInst=null;
+
+function renderAgBarChips(){
+  const el=document.getElementById('agBarChips');if(!el)return;
+  el.innerHTML=allAgBarAgents.map(a=>{
+    const gi=D.ag.indexOf(a),c=COL[gi%COL.length],off=!agBarActive.has(a.n);
+    const short=a.n.split(' ').map((w,j)=>j===0?w[0]+'.':w).join(' ');
+    return `<span class="cf-chip${off?' off':''}" style="border-color:${c};color:${off?'#aaa':c};background:${off?'transparent':c+'1a'}" onclick="toggleAgBar('${a.n.replace(/'/g,"\\'")}'">${short}</span>`;
+  }).join('');
 }
-// Agent table rendering
+
+function buildAgBar(){
+  renderAgBarChips();
+  const t=allAgBarAgents.filter(a=>agBarActive.has(a.n));
+  const lbl=t.map(a=>{const p=a.n.split(' ');return p[0][0]+'. '+(p[1]||'');});
+  if(agBarChartInst)agBarChartInst.destroy();
+  agBarChartInst=new Chart(document.getElementById('agBarChart'),{type:'bar',data:{labels:lbl,datasets:[{label:'Active Pipeline ($M)',data:t.map(a=>+(a.apv/1e6).toFixed(2)),backgroundColor:t.map(a=>COL[D.ag.indexOf(a)%COL.length]+'CC'),borderColor:t.map(a=>COL[D.ag.indexOf(a)%COL.length]),borderWidth:1.5,yAxisID:'y',borderRadius:3},{label:'Contact Rate (%)',data:t.map(a=>a.cr),type:'line',borderColor:'#E2C276',backgroundColor:'rgba(201,168,76,.1)',borderWidth:2.5,pointRadius:4,pointBackgroundColor:'#C9A84C',yAxisID:'y1',tension:0.3}]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},scales:{y:{type:'linear',position:'left',grid:{color:'rgba(0,0,0,.04)'},ticks:{callback:v=>'$'+v+'M',font:{size:11}}},y1:{type:'linear',position:'right',min:0,max:100,grid:{drawOnChartArea:false},ticks:{callback:v=>v+'%',font:{size:11}}},x:{grid:{display:false},ticks:{font:{size:10},maxRotation:30}}},plugins:{legend:{position:'top',labels:{font:{size:11,family:"'DM Sans',sans-serif"},boxWidth:12,padding:12}}}}});
+}
+
+function toggleAgBar(name){
+  if(agBarActive.has(name))agBarActive.delete(name);else agBarActive.add(name);
+  renderAgBarChips();
+  const t=allAgBarAgents.filter(a=>agBarActive.has(a.n));
+  const lbl=t.map(a=>{const p=a.n.split(' ');return p[0][0]+'. '+(p[1]||'');});
+  if(agBarChartInst){
+    agBarChartInst.data.labels=lbl;
+    agBarChartInst.data.datasets[0].data=t.map(a=>+(a.apv/1e6).toFixed(2));
+    agBarChartInst.data.datasets[0].backgroundColor=t.map(a=>COL[D.ag.indexOf(a)%COL.length]+'CC');
+    agBarChartInst.data.datasets[0].borderColor=t.map(a=>COL[D.ag.indexOf(a)%COL.length]);
+    agBarChartInst.data.datasets[1].data=t.map(a=>a.cr);
+    agBarChartInst.update('none');
+  }
+}
+
+// ── Agent Table ───────────────────────────────────────────────────────────────
 let sortKey='apv', activeFilter='', curAgents=[...D.ag];
 const maxApv=Math.max(...D.ag.filter(a=>a.apv>0).map(a=>a.apv));
 const maxTpv=Math.max(...D.ag.map(a=>a.cv+a.apv));
@@ -486,7 +621,6 @@ function renderAg(ag){
     html+=`<td>${topStr}${topWkn}</td>`;
     html+=`<td><div class="mbw"><div class="mb"><div class="mbf" style="width:${shareW}%"></div></div><div class="mbl">${shareW}%</div></div></td>`;
     html+='</tr>';
-    // Expand row
     const stgData=[
       {l:'Nurture',v:a.nurt},{l:'Attempted Cont.',v:a.atmp},{l:'Showing Homes',v:a.show},
       {l:'Under Contract',v:a.uc},{l:'Closed',v:a.cd}
@@ -503,10 +637,7 @@ function renderAg(ag){
 
 function toggleExp(idx){
   expandedIdx=(expandedIdx===idx)?null:idx;
-  const sorted=[...curAgents].sort((a,b)=>{
-    if(sortKey==='cr'||sortKey==='tl')return b[sortKey]-a[sortKey];
-    return b[sortKey]-a[sortKey];
-  });
+  const sorted=[...curAgents].sort((a,b)=>b[sortKey]-a[sortKey]);
   renderAg(sorted);
 }
 
