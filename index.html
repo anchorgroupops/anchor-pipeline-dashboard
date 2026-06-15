@@ -154,13 +154,37 @@ a{text-decoration:none}
 .sh .ct{margin-bottom:0}
 /* Misc */
 .pg-ft{text-align:center;padding:16px 22px;font-size:10.5px;color:var(--mut);border-top:1px solid var(--bdr);margin-top:8px}
+.ham{display:none;background:none;border:none;cursor:pointer;padding:6px;color:var(--nvy);flex-shrink:0;align-items:center;justify-content:center}
+.ham-lines{display:flex;flex-direction:column;gap:4px}
+.ham-lines span{width:20px;height:2px;background:currentColor;border-radius:1px;display:block}
+.sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:190}
+.sb-overlay.show{display:block}
+.sidebar{transition:transform .25s ease}
 /* Responsive */
 @media(max-width:1280px){.kpi-row{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:1100px){.g65{grid-template-columns:1fr}.exp-inner{grid-template-columns:1fr 1fr}}
 @media(max-width:900px){.g2{grid-template-columns:1fr}.fc-row{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:700px){.sidebar{display:none}.main{margin-left:0}.kpi-row{grid-template-columns:repeat(2,1fr)}.ig{grid-template-columns:1fr}.exp-inner{grid-template-columns:1fr}}
-@media(max-width:500px){.tb-sub{display:none}.badge-live{display:none}}
-@media print{.sidebar,.tb-r,.tbr,.pw-gate,.srch{display:none!important}.main{margin-left:0}.topbar{position:static;box-shadow:none}}
+@media(max-width:700px){
+  .ham{display:flex}
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}
+  .kpi-row{grid-template-columns:repeat(2,1fr)}
+  .ig{grid-template-columns:1fr}
+  .exp-inner{grid-template-columns:1fr}
+  .agt th:nth-child(5),.agt td:nth-child(5){display:none}
+  .agt th:nth-child(8),.agt td:nth-child(8){display:none}
+  .content{padding:14px 14px 40px}
+  .topbar{padding:0 14px;height:52px}
+}
+@media(max-width:500px){
+  .tb-sub,.badge-live{display:none}
+  .kpi-row{grid-template-columns:repeat(2,1fr)}
+  .fc-row{grid-template-columns:1fr 1fr}
+  .btn-ol{display:none}
+}
+@media(max-width:380px){.kpi-row{grid-template-columns:1fr}}
+@media print{.sidebar,.tb-r,.tbr,.pw-gate,.srch,.ham,.sb-overlay{display:none!important}.main{margin-left:0}.topbar{position:static;box-shadow:none}}
 </style>
 </head><body>
 <!-- Password Gate -->
@@ -176,7 +200,8 @@ a{text-decoration:none}
 </div>
 <!-- Dashboard Layout -->
 <div class="layout" id="dash" style="display:none">
-<aside class="sidebar">
+<div class="sb-overlay" id="sbOverlay" onclick="closeSidebar()"></div>
+<aside class="sidebar" id="sidebar">
   <div class="sb-logo">
     <div class="sb-icon">&#9875;</div>
     <div class="sb-text"><h1>The Anchor Group</h1><p>Pipeline Dashboard</p></div>
@@ -199,6 +224,7 @@ a{text-decoration:none}
 <!-- Topbar -->
 <div class="topbar">
   <div class="tb-l">
+    <button class="ham" onclick="openSidebar()" aria-label="Open menu"><div class="ham-lines"><span></span><span></span><span></span></div></button>
     <div class="tb-title">&#9875; Pipeline Review</div>
     <div class="tb-sep"></div>
     <div class="tb-sub">The Anchor Group by LPT Realty &mdash; Owner View &middot; Jun 15, 2026</div>
@@ -520,8 +546,10 @@ function checkPw(){
 }
 document.getElementById('pwIn').addEventListener('keydown',e=>{if(e.key==='Enter')checkPw();});
 
-// Sidebar active state
-document.querySelectorAll('.ni').forEach(x=>x.addEventListener('click',function(){document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));this.classList.add('active');}));
+// Sidebar open/close (mobile)
+function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('sbOverlay').classList.add('show');}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sbOverlay').classList.remove('show');}
+document.querySelectorAll('.ni').forEach(x=>x.addEventListener('click',function(){document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));this.classList.add('active');if(window.innerWidth<=700)closeSidebar();}));
 
 // Init
 Chart.defaults.font.family="'DM Sans',-apple-system,sans-serif";
