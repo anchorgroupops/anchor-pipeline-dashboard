@@ -1,0 +1,537 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anchor Group · Pipeline Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{--nvy:#0D1B2A;--nvy-l:#162840;--gld:#C9A84C;--gld-l:#E2C276;--gld-d:#A0803A;--tel:#2EC4B6;--tel-d:#1FA99D;--red:#E05252;--grn:#3CB371;--amb:#F59E0B;--bg:#EEF2F7;--card:#fff;--txt:#1A2540;--mut:#64748B;--bdr:#E2E8F0;--sh:0 1px 3px rgba(0,0,0,.04),0 4px 14px rgba(13,27,42,.07);--r:12px;--sbw:228px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--txt);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+a{text-decoration:none}
+/* Sidebar */
+.layout{display:flex;min-height:100vh}
+.sidebar{width:var(--sbw);background:var(--nvy);flex-shrink:0;position:fixed;height:100vh;overflow-y:auto;display:flex;flex-direction:column;z-index:200}
+.sb-logo{padding:17px 15px 14px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:10px}
+.sb-icon{width:34px;height:34px;background:var(--gld);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;line-height:1}
+.sb-text h1{font-family:'Sora',sans-serif;font-size:12.5px;font-weight:700;color:#fff;line-height:1.3}
+.sb-text p{font-size:10px;color:rgba(255,255,255,.35);margin-top:1px}
+.sb-nav{padding:10px 8px;flex:1}
+.ns{font-size:9.5px;font-weight:700;color:rgba(255,255,255,.27);text-transform:uppercase;letter-spacing:1.2px;padding:10px 8px 5px}
+.ni{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;font-size:13px;font-weight:500;color:rgba(255,255,255,.6);margin-bottom:1px;cursor:pointer;transition:all .15s}
+.ni:hover,.ni.active{background:rgba(201,168,76,.14);color:var(--gld-l)}
+.ni .ico{width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.sb-ft{padding:12px 14px;border-top:1px solid rgba(255,255,255,.06);font-size:10px;color:rgba(255,255,255,.28);line-height:1.7}
+.sb-ft strong{color:rgba(255,255,255,.44)}
+/* Main */
+.main{margin-left:var(--sbw);flex:1;min-width:0}
+/* Topbar */
+.topbar{background:var(--card);border-bottom:1px solid var(--bdr);height:56px;padding:0 22px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;gap:12px}
+.tb-l{display:flex;align-items:center;gap:12px;min-width:0;flex:1;overflow:hidden}
+.tb-sep{width:1px;height:26px;background:var(--bdr);flex-shrink:0}
+.tb-title{font-family:'Sora',sans-serif;font-size:15px;font-weight:700;color:var(--nvy);white-space:nowrap}
+.tb-sub{font-size:11.5px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tb-r{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.badge-live{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--grn);background:rgba(60,179,113,.1);padding:5px 10px;border-radius:20px;flex-shrink:0}
+.badge-live .dot{width:6px;height:6px;background:var(--grn);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:0 13px;height:32px;border-radius:7px;font-size:12.5px;font-weight:600;cursor:pointer;border:1.5px solid transparent;font-family:inherit;transition:all .15s;white-space:nowrap}
+.btn-ol{background:transparent;border-color:var(--bdr);color:var(--txt)}
+.btn-ol:hover{border-color:var(--nvy);color:var(--nvy)}
+.btn-gld{background:var(--gld);color:var(--nvy);border-color:var(--gld)}
+.btn-gld:hover{background:var(--gld-d);border-color:var(--gld-d)}
+/* Content */
+.content{padding:20px 22px 40px}
+/* KPI */
+.kpi-row{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:18px}
+.kpi{background:var(--card);border-radius:var(--r);padding:14px 16px 14px;box-shadow:var(--sh);border:1px solid var(--bdr);position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.k-gld::before{background:var(--gld)}.k-tel::before{background:var(--tel)}.k-grn::before{background:var(--grn)}.k-red::before{background:var(--red)}.k-amb::before{background:var(--amb)}.k-nvy::before{background:var(--nvy)}
+.kpi-ic{position:absolute;right:12px;top:14px;font-size:20px;opacity:.09;pointer-events:none}
+.kpi-lbl{font-size:10px;font-weight:600;color:var(--mut);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px;padding-top:3px}
+.kpi-val{font-family:'Sora',sans-serif;font-size:21px;font-weight:800;color:var(--nvy);line-height:1}
+.kpi-val.lg{font-size:24px}
+.kpi-sub{font-size:10.5px;color:var(--mut);margin-top:5px}
+/* Forecast */
+.fc-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.fcc{background:var(--card);border-radius:var(--r);padding:14px 18px;box-shadow:var(--sh);border:1px solid var(--bdr);border-top:3px solid transparent;text-align:center}
+.fcc.c30{border-top-color:var(--tel)}.fcc.c60{border-top-color:var(--gld)}.fcc.c90{border-top-color:var(--nvy)}.fcc.cuc{border-top-color:var(--red)}
+.fc-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--mut);margin-bottom:7px}
+.fc-num{font-family:'Sora',sans-serif;font-size:28px;font-weight:900;color:var(--nvy);line-height:1}
+.fc-val{font-size:14px;font-weight:700;color:var(--gld);margin-top:3px}
+.fc-sub{font-size:10px;color:var(--mut);margin-top:3px}
+/* Grids */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px}
+.g65{display:grid;grid-template-columns:60fr 40fr;gap:16px;margin-bottom:18px}
+.fw{margin-bottom:18px}
+/* Card */
+.card{background:var(--card);border-radius:var(--r);padding:18px 20px;box-shadow:var(--sh);border:1px solid var(--bdr)}
+.ch{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+.ct{font-family:'Sora',sans-serif;font-size:14px;font-weight:700;color:var(--nvy)}
+.cs{font-size:11.5px;color:var(--mut);margin-top:2px}
+/* Funnel */
+.fn-row{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.fn-lbl{font-size:11.5px;font-weight:500;width:148px;flex-shrink:0;color:var(--txt)}
+.fn-trk{flex:1;background:var(--bg);border-radius:4px;height:19px;overflow:hidden}
+.fn-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px;font-size:10px;font-weight:700;color:#fff;white-space:nowrap}
+.fn-cnt{font-size:11px;font-weight:700;color:var(--mut);width:36px;text-align:right;flex-shrink:0}
+.s0{background:#6B7897}.s1{background:#4A6FA5}.s2{background:#3A5F9C}
+.s3{background:#5B8DB8}.s4{background:#2EC4B6}.s5{background:#1A9E92}
+.s6{background:#C9A84C}.s7{background:#E0953A}.s8{background:#E06830}
+.s9{background:#C04040}.s10{background:#4CAF50}.s11{background:#2E7D32}
+/* Tab bar */
+.tbr{display:flex;gap:3px;background:var(--bg);border-radius:8px;padding:3px;margin-bottom:12px}
+.tab{flex:1;text-align:center;padding:6px 6px;border-radius:6px;font-size:11.5px;font-weight:600;cursor:pointer;color:var(--mut);transition:all .15s;white-space:nowrap}
+.tab.active{background:var(--card);color:var(--nvy);box-shadow:var(--sh)}
+.tab:hover:not(.active){color:var(--txt)}
+/* Agent table */
+.agt{width:100%;border-collapse:collapse;font-size:13px}
+.agt th{text-align:left;padding:8px 10px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--mut);border-bottom:2px solid var(--bdr);cursor:pointer;white-space:nowrap}
+.agt th:hover{color:var(--nvy)}
+.agt td{padding:9px 10px;border-bottom:1px solid var(--bdr);vertical-align:middle}
+.agt tr:last-child td,.agt tr.exp-row td{border-bottom:none}
+.agt tbody tr.data-row:hover td{background:rgba(13,27,42,.02);cursor:pointer}
+.agt tr.data-row.open td{background:rgba(201,168,76,.04)}
+.avi{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;font-size:10px;font-weight:700;flex-shrink:0;margin-right:8px;vertical-align:middle}
+.aname{font-weight:600;color:var(--nvy);vertical-align:middle}
+.rk{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;font-size:10.5px;font-weight:700}
+.r1{background:#FFD700;color:#5C3D00}.r2{background:#C0C0C0;color:#333}.r3{background:#CD7F32;color:#fff}.rn{background:var(--bg);color:var(--mut)}
+.pill{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700}
+.p-grn{background:rgba(60,179,113,.12);color:#14532d}.p-amb{background:rgba(245,158,11,.12);color:#78350f}.p-red{background:rgba(224,82,82,.12);color:#7f1d1d}
+.sw-t{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:8px;font-size:10px;font-weight:600;margin:1px 2px}
+.sw-s{background:rgba(46,196,182,.1);color:#0f766e}.sw-w{background:rgba(224,82,82,.08);color:#991b1b}
+.mbw{display:flex;align-items:center;gap:6px}
+.mb{flex:1;height:5px;background:var(--bg);border-radius:3px;overflow:hidden}
+.mbf{height:100%;border-radius:3px;background:var(--gld)}
+.mbl{font-size:11px;font-weight:600;color:var(--mut);min-width:30px;text-align:right}
+/* Expand row */
+.exp-row td{padding:0!important;border-bottom:2px solid var(--bdr)!important}
+.exp-inner{padding:16px 20px;background:rgba(238,242,247,.9);display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
+.exp-sec h4{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px}
+.exp-sec.str h4{color:#0f766e}.exp-sec.wkn h4{color:#991b1b}.exp-sec.stg h4{color:var(--mut)}
+.exp-item{display:flex;align-items:flex-start;gap:7px;margin-bottom:8px;font-size:12px}
+.exp-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.exp-dot.s{background:var(--tel)}.exp-dot.w{background:var(--red)}
+.exp-strong{font-weight:600;color:var(--nvy)}
+.exp-det{color:var(--mut);font-size:11px;margin-top:1px}
+.stg-row{display:flex;align-items:center;gap:7px;margin-bottom:5px}
+.stg-lbl{font-size:11px;color:var(--txt);width:110px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stg-bar{flex:1;height:8px;background:var(--bdr);border-radius:3px;overflow:hidden}
+.stg-fill{height:100%;border-radius:3px;background:var(--gld)}
+.stg-n{font-size:10px;font-weight:600;color:var(--mut);width:24px;text-align:right}
+/* Insights */
+.ig{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.ic{padding:13px 15px;border-radius:10px;border-left:3px solid transparent;background:var(--bg)}
+.ic.urg{border-left-color:var(--red);background:rgba(224,82,82,.05)}
+.ic.opp{border-left-color:var(--tel);background:rgba(46,196,182,.05)}
+.ic.pos{border-left-color:var(--grn);background:rgba(60,179,113,.05)}
+.ic.wrn{border-left-color:var(--amb);background:rgba(245,158,11,.05)}
+.it{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px}
+.urg .it{color:var(--red)}.opp .it{color:var(--tel-d)}.pos .it{color:#166534}.wrn .it{color:#92400e}
+.im{font-family:'Sora',sans-serif;font-size:20px;font-weight:800;color:var(--nvy);margin:4px 0}
+.ix{font-size:12px;line-height:1.5;color:var(--txt)}
+/* Srch */
+.srch{padding:6px 10px;border:1.5px solid var(--bdr);border-radius:7px;font-size:12px;font-family:inherit;width:148px;outline:none;background:var(--bg);color:var(--txt);transition:border-color .15s}
+.srch:focus{border-color:var(--gld);background:#fff}
+/* Password gate */
+.pw-gate{position:fixed;inset:0;background:var(--nvy);display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:14px}
+.pw-gate.hide{display:none}
+.pw-ico{font-size:44px;margin-bottom:6px;line-height:1}
+.pw-gate h2{font-family:'Sora',sans-serif;font-size:20px;font-weight:700;color:#fff}
+.pw-gate p{font-size:12.5px;color:rgba(255,255,255,.4);margin-top:-6px}
+.pw-box{display:flex;gap:8px;margin-top:4px}
+.pw-in{padding:9px 14px;border-radius:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:13.5px;font-family:inherit;outline:none;width:210px}
+.pw-in::placeholder{color:rgba(255,255,255,.3)}
+.pw-in:focus{border-color:var(--gld)}
+.pw-btn{padding:9px 18px;background:var(--gld);color:var(--nvy);border:none;border-radius:8px;font-weight:700;font-size:13.5px;cursor:pointer;font-family:inherit}
+.pw-err{font-size:12px;color:#ff8888;display:none;margin-top:-6px}
+/* Section head */
+.sh{margin-bottom:12px}
+.sh .ct{margin-bottom:0}
+/* Misc */
+.pg-ft{text-align:center;padding:16px 22px;font-size:10.5px;color:var(--mut);border-top:1px solid var(--bdr);margin-top:8px}
+/* Responsive */
+@media(max-width:1280px){.kpi-row{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:1100px){.g65{grid-template-columns:1fr}.exp-inner{grid-template-columns:1fr 1fr}}
+@media(max-width:900px){.g2{grid-template-columns:1fr}.fc-row{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:700px){.sidebar{display:none}.main{margin-left:0}.kpi-row{grid-template-columns:repeat(2,1fr)}.ig{grid-template-columns:1fr}.exp-inner{grid-template-columns:1fr}}
+@media(max-width:500px){.tb-sub{display:none}.badge-live{display:none}}
+@media print{.sidebar,.tb-r,.tbr,.pw-gate,.srch{display:none!important}.main{margin-left:0}.topbar{position:static;box-shadow:none}}
+</style>
+</head><body>
+<!-- Password Gate -->
+<div class="pw-gate" id="pwGate">
+  <div class="pw-ico">&#9875;</div>
+  <h2>The Anchor Group</h2>
+  <p>Pipeline Dashboard &mdash; Owner Access</p>
+  <div class="pw-box">
+    <input class="pw-in" id="pwIn" type="password" placeholder="Enter access code" onkeydown="if(event.key==='Enter')checkPw()">
+    <button class="pw-btn" onclick="checkPw()">Enter</button>
+  </div>
+  <div class="pw-err" id="pwErr">Incorrect access code. Try again.</div>
+</div>
+<!-- Dashboard Layout -->
+<div class="layout" id="dash" style="display:none">
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-icon">&#9875;</div>
+    <div class="sb-text"><h1>The Anchor Group</h1><p>Pipeline Dashboard</p></div>
+  </div>
+  <nav class="sb-nav">
+    <div class="ns">Dashboard</div>
+    <a href="#overview" class="ni active"><span class="ico">&#128202;</span>Pipeline Overview</a>
+    <a href="#agents" class="ni"><span class="ico">&#128101;</span>Team Performance</a>
+    <a href="#forecast" class="ni"><span class="ico">&#128200;</span>Revenue Forecast</a>
+    <a href="#insights" class="ni"><span class="ico">&#128161;</span>Insights</a>
+    <div class="ns" style="margin-top:14px">Analysis</div>
+    <a href="#funnel" class="ni"><span class="ico">&#8964;</span>Stage Funnel</a>
+    <a href="#sources" class="ni"><span class="ico">&#128279;</span>Lead Sources</a>
+    <a href="#readiness" class="ni"><span class="ico">&#9201;</span>Buyer Readiness</a>
+    <a href="#trends" class="ni"><span class="ico">&#128197;</span>Monthly Trends</a>
+  </nav>
+  <div class="sb-ft"><strong>Jun 15, 2026 Export</strong>6,021 CRM contacts &middot; 25 agents<br>Aggregated &mdash; No PII stored</div>
+</aside>
+<main class="main">
+<!-- Topbar -->
+<div class="topbar">
+  <div class="tb-l">
+    <div class="tb-title">&#9875; Pipeline Review</div>
+    <div class="tb-sep"></div>
+    <div class="tb-sub">The Anchor Group by LPT Realty &mdash; Owner View &middot; Jun 15, 2026</div>
+  </div>
+  <div class="tb-r">
+    <div class="badge-live"><span class="dot"></span>Live Data</div>
+    <button class="btn btn-ol" onclick="window.print()">&#128424; Print PDF</button>
+    <button class="btn btn-gld" onclick="exportCSV()">&#8681; Export CSV</button>
+  </div>
+</div>
+<!-- Content -->
+<div class="content">
+<div id="overview"></div>
+<!-- KPI Row -->
+<div class="kpi-row">
+  <div class="kpi k-gld">
+    <div class="kpi-ic">&#128176;</div>
+    <div class="kpi-lbl">Active Pipeline</div>
+    <div class="kpi-val lg">$34.9M</div>
+    <div class="kpi-sub">Non-closed deals with price data</div>
+  </div>
+  <div class="kpi k-red">
+    <div class="kpi-ic">&#128293;</div>
+    <div class="kpi-lbl">Under Contract</div>
+    <div class="kpi-val lg">43</div>
+    <div class="kpi-sub">$14.9M closing soon</div>
+  </div>
+  <div class="kpi k-tel">
+    <div class="kpi-ic">&#9889;</div>
+    <div class="kpi-lbl">Hot Buyers</div>
+    <div class="kpi-val lg">1,185</div>
+    <div class="kpi-sub">Ready to buy in 0&ndash;3 months</div>
+  </div>
+  <div class="kpi k-amb">
+    <div class="kpi-ic">&#127968;</div>
+    <div class="kpi-lbl">Showing Homes</div>
+    <div class="kpi-val lg">124</div>
+    <div class="kpi-sub">Active buyer showings now</div>
+  </div>
+  <div class="kpi k-grn">
+    <div class="kpi-ic">&#128200;</div>
+    <div class="kpi-lbl">Record Month</div>
+    <div class="kpi-val lg">30</div>
+    <div class="kpi-sub">Closings in Jun 2026 (all-time high)</div>
+  </div>
+  <div class="kpi k-nvy">
+    <div class="kpi-ic">&#128100;</div>
+    <div class="kpi-lbl">Contact Rate</div>
+    <div class="kpi-val lg">61.1%</div>
+    <div class="kpi-sub">3,678 of 6,021 reached</div>
+  </div>
+</div>
+<!-- Forecast -->
+<div id="forecast"></div>
+<div class="sh fw" style="margin-bottom:10px"><div class="ct">Revenue Forecast</div><div class="cs">Scheduled close dates over the next 90 days</div></div>
+<div class="fc-row">
+  <div class="fcc c30"><div class="fc-lbl">&#9889; Next 30 Days</div><div class="fc-num">11</div><div class="fc-val">$3,897,000</div><div class="fc-sub">Closing by Jul 15</div></div>
+  <div class="fcc c60"><div class="fc-lbl">&#128197; Days 31&ndash;60</div><div class="fc-num">1</div><div class="fc-val">$480,000</div><div class="fc-sub">Closing by Aug 14</div></div>
+  <div class="fcc c90"><div class="fc-lbl">&#128198; Days 61&ndash;90</div><div class="fc-num">2</div><div class="fc-val">$697,000</div><div class="fc-sub">Closing by Sep 13</div></div>
+  <div class="fcc cuc"><div class="fc-lbl">&#128293; Under Contract Now</div><div class="fc-num">43</div><div class="fc-val">$14,909,439</div><div class="fc-sub">Active contracts in pipeline</div></div>
+</div><!-- Funnel + Revenue Donut -->
+<div id="funnel"></div>
+<div class="g65">
+  <div class="card"><div class="ch"><div><div class="ct">Pipeline Stage Funnel</div><div class="cs">All 6,021 contacts by current stage</div></div></div><div id="fnViz"></div></div>
+  <div class="card"><div class="ch"><div><div class="ct">Revenue by Stage</div><div class="cs">$121.8M total pipeline value</div></div></div><div style="position:relative;height:270px"><canvas id="revDonut"></canvas></div></div>
+</div>
+<!-- Agent Performance -->
+<div id="agents" class="fw"><div class="card">
+  <div class="ch">
+    <div><div class="ct">Team Performance</div><div class="cs">Sorted by active pipeline &mdash; click any row to expand strengths &amp; weaknesses</div></div>
+    <input id="agSrch" class="srch" type="text" placeholder="&#128269; Filter agents..." oninput="filterAg(this.value)">
+  </div>
+  <div class="tbr">
+    <div class="tab active" onclick="sortAg('apv')">Active Pipeline</div>
+    <div class="tab" onclick="sortAg('uc')">Under Contract</div>
+    <div class="tab" onclick="sortAg('cr')">Contact Rate</div>
+    <div class="tab" onclick="sortAg('cd')">Closed Deals</div>
+    <div class="tab" onclick="sortAg('tl')">Total Leads</div>
+  </div>
+  <div style="overflow-x:auto"><table class="agt">
+    <thead><tr>
+      <th style="width:38px">#</th>
+      <th>Agent</th>
+      <th onclick="sortAg('apv')" title="Sort by Active Pipeline">Active Pipeline</th>
+      <th onclick="sortAg('uc')" title="Sort by Under Contract">Under Contract</th>
+      <th onclick="sortAg('show')">Showing</th>
+      <th onclick="sortAg('cr')" title="Sort by Contact Rate">Contact Rate</th>
+      <th>Strengths / Weaknesses</th>
+      <th onclick="sortAg('tl')">Pipeline Share</th>
+    </tr></thead>
+    <tbody id="agTb"></tbody>
+  </table></div>
+</div></div>
+<!-- Lead Sources + Buyer Readiness -->
+<div id="sources"></div>
+<div class="g2">
+  <div class="card"><div class="ch"><div><div class="ct">Lead Sources</div><div class="cs">6,021 contacts by origin</div></div></div><div style="position:relative;height:230px"><canvas id="srcChart"></canvas></div></div>
+  <div class="card" id="readiness"><div class="ch"><div><div class="ct">Buyer Readiness</div><div class="cs">2,485 contacts with purchase timeframe</div></div></div><div style="position:relative;height:230px"><canvas id="rdChart"></canvas></div></div>
+</div>
+<!-- Monthly Trends -->
+<div id="trends"></div>
+<div class="g2">
+  <div class="card"><div class="ch"><div><div class="ct">Monthly Closings</div><div class="cs">Deals closed per month (2025&ndash;2026)</div></div></div><div style="position:relative;height:210px"><canvas id="clChart"></canvas></div></div>
+  <div class="card"><div class="ch"><div><div class="ct">New Leads Added</div><div class="cs">Contacts added per month (2024&ndash;2026)</div></div></div><div style="position:relative;height:210px"><canvas id="lkChart"></canvas></div></div>
+</div>
+<div class="card fw"><div class="ch"><div><div class="ct">Agent Performance Comparison</div><div class="cs">Active pipeline (bars) vs contact rate (line) &mdash; top 15 agents by active pipeline</div></div></div><div style="position:relative;height:290px"><canvas id="agBarChart"></canvas></div></div>
+<!-- Insights -->
+<div id="insights" class="fw">
+  <div class="sh" style="margin-bottom:12px"><div class="ct">Actionable Insights</div><div class="cs">Key findings from pipeline analysis</div></div>
+  <div class="ig">
+    <div class="ic urg"><div class="it">&#9888; Attention Needed</div><div class="im">38.9%</div><div class="ix">of contacts have <strong>never been reached</strong>. 2,343 uncontacted leads — converting 10% adds ~234 active prospects.</div></div>
+    <div class="ic opp"><div class="it">&#127919; Hot Leads</div><div class="im">1,185</div><div class="ix"><strong>0-3 month buyers</strong> in the pipeline now need high-frequency outreach before going elsewhere.</div></div>
+    <div class="ic pos"><div class="it">&#127942; Contact Champion</div><div class="im">95.2%</div><div class="ix"><strong>I. Mariah Samuels</strong> leads contact rate (20 of 21 leads). Already has 1 under contract — full ramp incoming.</div></div>
+    <div class="ic wrn"><div class="it">&#9201; Stalled Outreach</div><div class="im">507</div><div class="ix">leads in <strong>Attempted Contact</strong> — Priscilla Arzivian holds 237 of these alone. Needs immediate re-engagement.</div></div>
+    <div class="ic pos"><div class="it">&#128200; Record Pace</div><div class="im">+138%</div><div class="ix">Lead intake surged in 2025, peaking at <strong>296 in Mar 2026</strong>. June 2026 is the highest-closing month ever (30).</div></div>
+    <div class="ic opp"><div class="it">&#128161; Immediate Revenue</div><div class="im">$14.9M</div><div class="ix"><strong>43 under-contract deals</strong> are near-term revenue. Heather DiMillo holds 14 of them — highest on the team.</div></div>
+    <div class="ic wrn"><div class="it">&#128279; Source Risk</div><div class="im">85%</div><div class="ix">of leads from <strong>Zillow Preferred + Premier Agent</strong> alone. Platform dependency is a business risk.</div></div>
+    <div class="ic urg"><div class="it">&#9889; Critical Gap</div><div class="im">11.6%</div><div class="ix"><strong>Areli Salazar</strong> contacts only 11.6% of leads despite 12 closings. Enormous conversion potential being lost.</div></div>
+    <div class="ic pos"><div class="it">&#127919; Efficiency Star</div><div class="im">37%</div><div class="ix"><strong>Mita Tomerlin</strong> closes 10 of 27 leads (37% close rate) — the team's best conversion efficiency with minimal volume.</div></div>
+  </div>
+</div>
+</div><!-- /content -->
+<div class="pg-ft">&#9875; The Anchor Group by LPT Realty &mdash; Pipeline Dashboard &middot; Jun 15, 2026 &middot; <strong>Aggregated metrics only. No PII displayed.</strong></div>
+</main>
+</div><!-- /layout --><script>
+const D={
+ag:[
+{n:'Heather DiMillo',    tl:376, cr:46.5,cd:31, cv:8933690, apv:7478870, uc:14,show:26,nurt:118, atmp:42, calls:231,texts:168,avgpx:288184,src:'Zillow Preferred'},
+{n:'Michelle McKinney',  tl:3401,cr:55.7,cd:81, cv:11888208,apv:6391800, uc:2, show:19,nurt:1666,atmp:159,calls:988,texts:905,avgpx:146768,src:'Zillow Preferred'},
+{n:'Angie Thomas',       tl:220, cr:63.2,cd:65, cv:7841670, apv:3997975, uc:8, show:0, nurt:102, atmp:2,  calls:136,texts:100,avgpx:120641,src:'Zillow Preferred'},
+{n:'Angela Cerniglia',   tl:271, cr:70.5,cd:68, cv:6381980, apv:3640700, uc:3, show:22,nurt:153, atmp:2,  calls:159,texts:176,avgpx:93853, src:'Zillow Preferred'},
+{n:'Talia Thun',         tl:74,  cr:93.2,cd:21, cv:8323381, apv:1963900, uc:1, show:2, nurt:43,  atmp:2,  calls:64, texts:64, avgpx:396351,src:'Zillow Preferred'},
+{n:'Paige McKinney',     tl:144, cr:75.7,cd:8,  cv:3473139, apv:1556500, uc:3, show:4, nurt:79,  atmp:9,  calls:124,texts:126,avgpx:434142,src:'Zillow Preferred'},
+{n:'John Collinge',      tl:118, cr:83.1,cd:22, cv:7832506, apv:1440889, uc:4, show:10,nurt:70,  atmp:2,  calls:104,texts:96, avgpx:356023,src:'Zillow Preferred'},
+{n:'Danny Reynolds',     tl:123, cr:82.1,cd:8,  cv:2328270, apv:1257900, uc:1, show:0, nurt:86,  atmp:11, calls:118,texts:115,avgpx:291034,src:'Zillow Preferred'},
+{n:'Janice Blevins',     tl:134, cr:74.6,cd:14, cv:3660300, apv:1110000, uc:0, show:0, nurt:119, atmp:0,  calls:107,texts:104,avgpx:261450,src:'Zillow Preferred'},
+{n:'Lisa Stewart',       tl:179, cr:63.1,cd:6,  cv:2160390, apv:1012480, uc:0, show:11,nurt:115, atmp:12, calls:124,texts:124,avgpx:360065,src:'Zillow Preferred'},
+{n:'Tom Oreste',         tl:115, cr:73,  cd:19, cv:6138000, apv:894000,  uc:0, show:5, nurt:81,  atmp:2,  calls:105,texts:72, avgpx:323053,src:'Zillow Preferred'},
+{n:'Priscilla Arzivian', tl:373, cr:82.6,cd:11, cv:1655500, apv:627900,  uc:2, show:14,nurt:44,  atmp:237,calls:98, texts:36, avgpx:150500,src:'Agent-generated'},
+{n:'I. Mariah Samuels',  tl:21,  cr:95.2,cd:0,  cv:0,       apv:615000,  uc:1, show:1, nurt:13,  atmp:1,  calls:13, texts:20, avgpx:0,     src:'Zillow Preferred'},
+{n:'Mita Tomerlin',      tl:27,  cr:92.6,cd:10, cv:2948000, apv:615400,  uc:0, show:0, nurt:14,  atmp:0,  calls:21, texts:26, avgpx:294800,src:'Zillow Preferred'},
+{n:'Scott Barry',        tl:57,  cr:26.3,cd:9,  cv:2205990, apv:530000,  uc:0, show:0, nurt:20,  atmp:0,  calls:20, texts:10, avgpx:245110,src:'Zillow Preferred'},
+{n:'Natasha Balgobin',   tl:28,  cr:46.4,cd:1,  cv:490000,  apv:343505,  uc:1, show:0, nurt:12,  atmp:4,  calls:13, texts:15, avgpx:490000,src:'Zillow Preferred'},
+{n:'Carly Young-Bolander',tl:31, cr:83.9,cd:1,  cv:283000,  apv:295000,  uc:0, show:2, nurt:16,  atmp:2,  calls:28, texts:23, avgpx:283000,src:'Zillow Preferred'},
+{n:'Kesia Ash',          tl:27,  cr:63,  cd:4,  cv:909000,  apv:285000,  uc:1, show:1, nurt:15,  atmp:4,  calls:10, texts:13, avgpx:227250,src:'Zillow Preferred'},
+{n:'Isaiah Lugo',        tl:20,  cr:50,  cd:0,  cv:0,       apv:275000,  uc:1, show:0, nurt:0,   atmp:3,  calls:10, texts:12, avgpx:0,     src:'Zillow Preferred'},
+{n:'Areli Salazar',      tl:43,  cr:11.6,cd:12, cv:1496990, apv:0,       uc:0, show:0, nurt:25,  atmp:0,  calls:2,  texts:2,  avgpx:124749,src:'Zillow Preferred'},
+{n:'David Nix',          tl:23,  cr:73.9,cd:2,  cv:1009000, apv:0,       uc:0, show:1, nurt:18,  atmp:1,  calls:19, texts:21, avgpx:504500,src:'Zillow Preferred'},
+{n:'Mariel Ferraro',     tl:43,  cr:41.9,cd:0,  cv:0,       apv:0,       uc:0, show:5, nurt:3,   atmp:7,  calls:28, texts:26, avgpx:0,     src:'Zillow Preferred'},
+{n:'Marie Daniel',       tl:16,  cr:56.2,cd:0,  cv:0,       apv:0,       uc:0, show:0, nurt:2,   atmp:2,  calls:8,  texts:10, avgpx:0,     src:'Zillow Preferred'},
+{n:'BrieAnne Julian',    tl:11,  cr:81.8,cd:0,  cv:0,       apv:0,       uc:0, show:1, nurt:1,   atmp:1,  calls:4,  texts:6,  avgpx:0,     src:'Zillow Preferred'},
+{n:'Sam Crawford',       tl:24,  cr:58.3,cd:0,  cv:0,       apv:0,       uc:0, show:2, nurt:10,  atmp:3,  calls:14, texts:16, avgpx:0,     src:'Zillow Preferred'}
+],
+st:[
+{n:'Nurture',c:2914,s:'s0'},{n:'Lead',c:1134,s:'s1'},{n:'Spoke w/ Customer',c:665,s:'s3'},
+{n:'Attempted Contact',c:507,s:'s2'},{n:'Closed',c:412,s:'s11'},{n:'Showing Homes',c:124,s:'s6'},
+{n:'Appointment Set',c:50,s:'s4'},{n:'Met w/ Customer',c:50,s:'s5'},{n:'Under Contract',c:43,s:'s8'},
+{n:'Submitting Offers',c:15,s:'s7'},{n:'Active Listing',c:10,s:'s9'},{n:'Listing Agreement',c:2,s:'s10'}
+],
+sr:{l:['Closed','Under Contract','Nurture','Active Listing','Showing Homes','Other'],v:[85130504,14909439,13356680,2968900,2762900,2703900]},
+ls:{l:['Zillow Preferred','Premier Agent','Agent-Generated','Zillow','Other'],v:[3923,1196,416,275,211]},
+tf:{l:['0-3 Months','3-6 Months','6-12 Months','12+ Months','No Plans'],v:[1185,583,278,221,218]},
+cl:{lb:['Jan25','Feb25','Mar25','Apr25','May25','Jun25','Jul25','Aug25','Sep25','Oct25','Nov25','Dec25','Jan26','Feb26','Mar26','Apr26','May26','Jun26'],d:[2,5,8,16,17,14,19,13,15,17,22,20,12,18,14,24,26,30]},
+lk:{lb:['Jan24','Feb24','Mar24','Apr24','May24','Jun24','Jul24','Aug24','Sep24','Oct24','Nov24','Dec24','Jan25','Feb25','Mar25','Apr25','May25','Jun25','Jul25','Aug25','Sep25','Oct25','Nov25','Dec25','Jan26','Feb26','Mar26','Apr26','May26','Jun26'],d:[29,45,53,50,64,73,62,57,66,58,67,70,118,131,138,145,179,176,202,209,190,175,185,184,223,262,296,214,223,93]}
+};
+const COL=['#0D1B2A','#1E3252','#2A4F93','#4A6FA5','#2EC4B6','#1A9E92','#C9A84C','#E2C276','#4CAF50','#E05252','#F59E0B','#6B7897','#3A5F9C','#E06830','#2E7D32','#C04040','#8E44AD','#16A085','#D35400','#2980B9','#1ABC9C','#8E44AD','#E74C3C','#F39C12','#27AE60'];
+const fm=n=>new Intl.NumberFormat('en-US').format(n);
+const fd=n=>n>=1e6?'$'+(n/1e6).toFixed(1)+'M':n>=1e3?'$'+(n/1e3).toFixed(0)+'K':'$'+fm(n);
+const ini=n=>n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+
+// S/W Analysis
+function swAnalysis(a){
+  const teamCr=+(D.ag.filter(x=>x.tl>=20).reduce((s,x)=>s+x.cr,0)/D.ag.filter(x=>x.tl>=20).length).toFixed(0);
+  const maxTl=Math.max(...D.ag.map(x=>x.tl));
+  const maxApv=Math.max(...D.ag.filter(x=>x.apv>0).map(x=>x.apv));
+  const pr=a.tl>0?a.cd/a.tl:0;
+  const nr=a.tl>0?a.nurt/a.tl:0;
+  const ar=a.tl>0?a.atmp/a.tl:0;
+  const str=[],wkn=[];
+  if(a.cr>=90)str.push({t:'Contact Champion',d:a.cr+'% contact rate — team-leading engagement'});
+  else if(a.cr>=80)str.push({t:'High Engager',d:a.cr+'% contact rate, above team average'});
+  if(a.tl/maxTl>0.4)str.push({t:'Volume Leader',d:fm(a.tl)+' leads — largest book of business'});
+  if(a.avgpx>=400000)str.push({t:'Luxury Specialist',d:'$'+(a.avgpx/1000).toFixed(0)+'K average deal price'});
+  else if(a.avgpx>=280000)str.push({t:'Premium Market',d:'$'+(a.avgpx/1000).toFixed(0)+'K average deal price'});
+  if(a.uc>=10)str.push({t:'Contract Machine',d:a.uc+' deals under contract right now'});
+  else if(a.uc>=3)str.push({t:'Active Contracts',d:a.uc+' deals under contract'});
+  if(a.apv/maxApv>=0.4)str.push({t:'Pipeline Leader',d:fd(a.apv)+' in active working deals'});
+  if(pr>=0.25)str.push({t:'Elite Closer',d:(pr*100).toFixed(0)+'% of all leads closed'});
+  else if(pr>=0.12)str.push({t:'Consistent Closer',d:(pr*100).toFixed(0)+'% close rate'});
+  if(a.cd>=60)str.push({t:'Production Leader',d:a.cd+' career closings'});
+  else if(a.cd>=20)str.push({t:'Established Producer',d:a.cd+' career closings'});
+  if(a.show>=15)str.push({t:'Active Showings',d:a.show+' buyers currently being shown homes'});
+  if(a.cr<30)wkn.push({t:'Critical Contact Gap',d:a.cr+'% contact rate — urgent intervention needed'});
+  else if(a.cr<50)wkn.push({t:'Contact Rate Lag',d:a.cr+'% vs '+teamCr+'% team average'});
+  if(nr>0.55&&a.tl>30)wkn.push({t:'Nurture-Heavy',d:(nr*100).toFixed(0)+'% of leads stuck in nurture stage'});
+  if(ar>0.3)wkn.push({t:'Stalled Outreach',d:a.atmp+' leads in Attempted Contact ('+( ar*100).toFixed(0)+'%)'});
+  if(a.cd===0&&a.tl>=20)wkn.push({t:'No Closings Yet',d:a.tl+' leads, 0 closed — focus on conversion'});
+  if(a.apv===0&&a.tl>=20)wkn.push({t:'No Active Pipeline',d:'No priced active deals currently'});
+  if((a.calls+a.texts)<15&&a.tl>=30)wkn.push({t:'Low Logged Activity',d:'Only '+(a.calls+a.texts)+' recorded activities'});
+  return{str:str.slice(0,3),wkn:wkn.slice(0,2)};
+}
+// Chart builders
+function buildFn(){
+  const mx=Math.max(...D.st.map(s=>s.c));
+  document.getElementById('fnViz').innerHTML=D.st.map(s=>`<div class="fn-row"><div class="fn-lbl">${s.n}</div><div class="fn-trk"><div class="fn-fill ${s.s}" style="width:${(s.c/mx*100).toFixed(1)}%">${s.c>80?fm(s.c):''}</div></div><div class="fn-cnt">${fm(s.c)}</div></div>`).join('');
+}
+function buildRevDonut(){
+  new Chart(document.getElementById('revDonut'),{type:'doughnut',data:{labels:D.sr.l,datasets:[{data:D.sr.v,backgroundColor:['#2E7D32','#E06830','#4A6FA5','#C9A84C','#2EC4B6','#6B7897'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,cutout:'64%',plugins:{legend:{position:'right',labels:{font:{size:11,family:"'DM Sans',sans-serif"},boxWidth:11,padding:8}},tooltip:{callbacks:{label:c=>' '+c.label+': '+fd(c.raw)}}}}});
+}
+function buildSrc(){
+  new Chart(document.getElementById('srcChart'),{type:'doughnut',data:{labels:D.ls.l,datasets:[{data:D.ls.v,backgroundColor:['#0D1B2A','#4A6FA5','#2EC4B6','#C9A84C','#6B7897'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{position:'right',labels:{font:{size:11,family:"'DM Sans',sans-serif"},boxWidth:11,padding:6}},tooltip:{callbacks:{label:c=>' '+c.label+': '+fm(c.raw)+' ('+(c.raw/6021*100).toFixed(1)+'%)'}}}}});
+}
+function buildRd(){
+  new Chart(document.getElementById('rdChart'),{type:'bar',data:{labels:D.tf.l,datasets:[{data:D.tf.v,backgroundColor:['#2E7D32','#4CAF50','#C9A84C','#F59E0B','#E05252'],borderRadius:5,borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',scales:{x:{grid:{color:'rgba(0,0,0,.04)'},ticks:{font:{size:11}}},y:{grid:{display:false},ticks:{font:{size:11,family:"'DM Sans',sans-serif"}}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+fm(c.raw)+' contacts'}}}}});
+}
+function buildCl(){
+  new Chart(document.getElementById('clChart'),{type:'bar',data:{labels:D.cl.lb,datasets:[{data:D.cl.d,backgroundColor:D.cl.d.map(v=>v>=25?'#2E7D32':v>=15?'#4CAF50':v>=10?'#C9A84C':'#6B7897'),borderRadius:3,borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{grid:{display:false},ticks:{font:{size:10},maxRotation:45}},y:{grid:{color:'rgba(0,0,0,.04)'},ticks:{font:{size:11},stepSize:5}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.raw+' closings'}}}}});
+}
+function buildLk(){
+  const ctx=document.getElementById('lkChart').getContext('2d');
+  const g=ctx.createLinearGradient(0,0,0,210);
+  g.addColorStop(0,'rgba(46,196,182,.22)');g.addColorStop(1,'rgba(46,196,182,0)');
+  new Chart(ctx,{type:'line',data:{labels:D.lk.lb,datasets:[{data:D.lk.d,borderColor:'#2EC4B6',backgroundColor:g,borderWidth:2.5,pointRadius:2,fill:true,tension:0.4}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{grid:{display:false},ticks:{font:{size:10},maxTicksLimit:10,maxRotation:45}},y:{grid:{color:'rgba(0,0,0,.04)'},ticks:{font:{size:11}}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.raw+' new contacts'}}}}});
+}
+function buildAgBar(){
+  const t=D.ag.filter(a=>a.apv>0).slice(0,15);
+  const lbl=t.map(a=>{const p=a.n.split(' ');return p[0][0]+'. '+(p[1]||'');});
+  new Chart(document.getElementById('agBarChart'),{type:'bar',data:{labels:lbl,datasets:[{label:'Active Pipeline ($M)',data:t.map(a=>+(a.apv/1e6).toFixed(2)),backgroundColor:t.map((_,i)=>COL[i%COL.length]+'CC'),borderColor:t.map((_,i)=>COL[i%COL.length]),borderWidth:1.5,yAxisID:'y',borderRadius:3},{label:'Contact Rate (%)',data:t.map(a=>a.cr),type:'line',borderColor:'#E2C276',backgroundColor:'rgba(201,168,76,.1)',borderWidth:2.5,pointRadius:4,pointBackgroundColor:'#C9A84C',yAxisID:'y1',tension:0.3}]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},scales:{y:{type:'linear',position:'left',grid:{color:'rgba(0,0,0,.04)'},ticks:{callback:v=>'$'+v+'M',font:{size:11}}},y1:{type:'linear',position:'right',min:0,max:100,grid:{drawOnChartArea:false},ticks:{callback:v=>v+'%',font:{size:11}}},x:{grid:{display:false},ticks:{font:{size:10},maxRotation:30}}},plugins:{legend:{position:'top',labels:{font:{size:11,family:"'DM Sans',sans-serif"},boxWidth:12,padding:12}}}}});
+}
+// Agent table rendering
+let sortKey='apv', activeFilter='', curAgents=[...D.ag];
+const maxApv=Math.max(...D.ag.filter(a=>a.apv>0).map(a=>a.apv));
+const maxTpv=Math.max(...D.ag.map(a=>a.cv+a.apv));
+let expandedIdx=null;
+
+function renderAg(ag){
+  const tbody=document.getElementById('agTb');
+  let html='';
+  ag.forEach((a,i)=>{
+    const globalIdx=D.ag.indexOf(a);
+    const {str,wkn}=swAnalysis(a);
+    const rc=i===0?'r1':i===1?'r2':i===2?'r3':'rn';
+    const pc=a.cr>=75?'p-grn':a.cr>=50?'p-amb':'p-red';
+    const cl=COL[globalIdx%COL.length];
+    const apvDisp=a.apv>0?fd(a.apv):'—';
+    const ucDisp=a.uc>0?'<strong>'+a.uc+'</strong>':'—';
+    const showDisp=a.show>0?a.show:'—';
+    const tpv=a.cv+a.apv;
+    const shareW=tpv>0?(tpv/maxTpv*100).toFixed(1):0;
+    const topStr=str.length>0?`<span class="sw-t sw-s">&#10003; ${str[0].t}</span>`:'';
+    const topWkn=wkn.length>0?`<span class="sw-t sw-w">&#9651; ${wkn[0].t}</span>`:'';
+    html+=`<tr class="data-row${expandedIdx===globalIdx?' open':''}" onclick="toggleExp(${globalIdx})">`;
+    html+=`<td><span class="rk ${rc}">${i+1}</span></td>`;
+    html+=`<td><span class="avi" style="background:${cl}22;color:${cl}">${ini(a.n)}</span><span class="aname">${a.n}</span></td>`;
+    html+=`<td>${apvDisp}</td>`;
+    html+=`<td>${ucDisp}</td>`;
+    html+=`<td>${showDisp}</td>`;
+    html+=`<td><span class="pill ${pc}">${a.cr}%</span></td>`;
+    html+=`<td>${topStr}${topWkn}</td>`;
+    html+=`<td><div class="mbw"><div class="mb"><div class="mbf" style="width:${shareW}%"></div></div><div class="mbl">${shareW}%</div></div></td>`;
+    html+='</tr>';
+    // Expand row
+    const stgData=[
+      {l:'Nurture',v:a.nurt},{l:'Attempted Cont.',v:a.atmp},{l:'Showing Homes',v:a.show},
+      {l:'Under Contract',v:a.uc},{l:'Closed',v:a.cd}
+    ].filter(s=>s.v>0);
+    const stgMax=Math.max(...stgData.map(s=>s.v),1);
+    const stgHtml=stgData.map(s=>`<div class="stg-row"><div class="stg-lbl">${s.l}</div><div class="stg-bar"><div class="stg-fill" style="width:${(s.v/stgMax*100).toFixed(0)}%"></div></div><div class="stg-n">${s.v}</div></div>`).join('');
+    const strHtml=str.length>0?str.map(s=>`<div class="exp-item"><span class="exp-dot s"></span><div><div class="exp-strong">${s.t}</div><div class="exp-det">${s.d}</div></div></div>`).join(''):'<div class="exp-det" style="color:#64748B">No standout strengths detected yet.</div>';
+    const wknHtml=wkn.length>0?wkn.map(w=>`<div class="exp-item"><span class="exp-dot w"></span><div><div class="exp-strong">${w.t}</div><div class="exp-det">${w.d}</div></div></div>`).join(''):'<div class="exp-det" style="color:#64748B">No significant gaps detected.</div>';
+    const avgPxStr=a.avgpx>0?'Avg deal: $'+(a.avgpx/1000).toFixed(0)+'K':'No closed deal avg yet';
+    html+=`<tr class="exp-row" id="exp-${globalIdx}" style="display:${expandedIdx===globalIdx?'table-row':'none'}"><td colspan="8"><div class="exp-inner"><div class="exp-sec str"><h4>&#10003; Strengths</h4>${strHtml}</div><div class="exp-sec wkn"><h4>&#9651; Areas to Develop</h4>${wknHtml}</div><div class="exp-sec stg"><h4>&#8599; Stage Snapshot &bull; ${fm(a.tl)} leads &bull; ${avgPxStr}</h4>${stgHtml||'<div class="exp-det">No stage data.</div>'}</div></div></td></tr>`;
+  });
+  tbody.innerHTML=html;
+}
+
+function toggleExp(idx){
+  expandedIdx=(expandedIdx===idx)?null:idx;
+  const sorted=[...curAgents].sort((a,b)=>{
+    if(sortKey==='cr'||sortKey==='tl')return b[sortKey]-a[sortKey];
+    return b[sortKey]-a[sortKey];
+  });
+  renderAg(sorted);
+}
+
+function sortAg(k){
+  sortKey=k;
+  const tabMap={apv:0,uc:1,cr:2,cd:3,tl:4};
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',i===tabMap[k]));
+  const sorted=[...curAgents].sort((a,b)=>b[k]-a[k]);
+  renderAg(sorted);
+}
+
+function filterAg(q){
+  activeFilter=q.toLowerCase();
+  curAgents=activeFilter?D.ag.filter(a=>a.n.toLowerCase().includes(activeFilter)):[...D.ag];
+  expandedIdx=null;
+  sortAg(sortKey);
+}
+
+function exportCSV(){
+  const hdr=['Agent','Total Leads','Active Pipeline','Closed Deals','Closed Value','Under Contract','Showing Homes','Contact Rate %','Avg Deal Price','Lead Source'];
+  const rows=D.ag.map(a=>[a.n,a.tl,a.apv,a.cd,a.cv,a.uc,a.show,a.cr,a.avgpx,a.src]);
+  const blob=new Blob([[hdr,...rows].map(r=>r.join(',')).join('\n')],{type:'text/csv'});
+  const u=URL.createObjectURL(blob);const el=document.createElement('a');
+  el.href=u;el.download='anchor-pipeline-2026-06-15.csv';el.click();URL.revokeObjectURL(u);
+}
+
+// Password gate
+const PWD=btoa('shelly83');
+function checkPw(){
+  const v=document.getElementById('pwIn').value.trim();
+  const err=document.getElementById('pwErr');
+  if(btoa(v.toLowerCase())===PWD){
+    document.getElementById('pwGate').classList.add('hide');
+    document.getElementById('dash').style.display='flex';
+    sessionStorage.setItem('ag_auth','1');
+  }else{err.style.display='block';document.getElementById('pwIn').value='';}
+}
+document.getElementById('pwIn').addEventListener('keydown',e=>{if(e.key==='Enter')checkPw();});
+
+// Sidebar active state
+document.querySelectorAll('.ni').forEach(x=>x.addEventListener('click',function(){document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));this.classList.add('active');}));
+
+// Init
+Chart.defaults.font.family="'DM Sans',-apple-system,sans-serif";
+if(sessionStorage.getItem('ag_auth')==='1'){
+  document.getElementById('pwGate').classList.add('hide');
+  document.getElementById('dash').style.display='flex';
+}
+buildFn();buildRevDonut();buildSrc();buildRd();buildCl();buildLk();
+renderAg([...D.ag].sort((a,b)=>b.apv-a.apv));
+buildAgBar();
+</script>
+</body>
+</html>
