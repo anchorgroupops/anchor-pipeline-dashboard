@@ -6,24 +6,23 @@
 <title>Anchor Group · Pipeline Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Sora:wght@400;600;700;800;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
-:root{--nvy:#0D1B2A;--nvy-l:#162840;--gld:#C9A84C;--gld-l:#E2C276;--gld-d:#A0803A;--tel:#2EC4B6;--tel-d:#1FA99D;--red:#E05252;--grn:#3CB371;--amb:#F59E0B;--bg:#EEF2F7;--card:#fff;--txt:#1A2540;--mut:#64748B;--bdr:#E2E8F0;--sh:0 1px 3px rgba(0,0,0,.04),0 4px 14px rgba(13,27,42,.07);--r:12px;--sbw:228px}
+:root{--nvy:#03466e;--nvy-l:#054f80;--gld:#157676;--gld-l:#1d9090;--gld-d:#0e5c5c;--tel:#89ced1;--tel-d:#6ab8bc;--red:#E05252;--grn:#3CB371;--amb:#F59E0B;--bg:#EFF4F7;--card:#fff;--txt:#1A2540;--mut:#64748B;--bdr:#dde6ec;--sh:0 1px 3px rgba(0,0,0,.04),0 4px 14px rgba(3,70,110,.08);--r:12px;--sbw:240px}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'DM Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--txt);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
 a{text-decoration:none}
 /* Sidebar */
 .layout{display:flex;min-height:100vh}
 .sidebar{width:var(--sbw);background:var(--nvy);flex-shrink:0;position:fixed;height:100vh;overflow-y:auto;display:flex;flex-direction:column;z-index:200}
-.sb-logo{padding:17px 15px 14px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:10px}
-.sb-icon{width:34px;height:34px;background:var(--gld);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;line-height:1}
-.sb-text h1{font-family:'Sora',sans-serif;font-size:12.5px;font-weight:700;color:#fff;line-height:1.3}
-.sb-text p{font-size:10px;color:rgba(255,255,255,.35);margin-top:1px}
+.sb-logo{padding:18px 20px 16px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;flex-direction:column;align-items:center;gap:6px}
+.sb-logo-img{width:148px;height:auto;display:block}
+.sb-logo-sub{font-size:9.5px;font-weight:600;color:rgba(255,255,255,.32);letter-spacing:1.2px;text-transform:uppercase;text-align:center}
 .sb-nav{padding:10px 8px;flex:1}
 .ns{font-size:9.5px;font-weight:700;color:rgba(255,255,255,.27);text-transform:uppercase;letter-spacing:1.2px;padding:10px 8px 5px}
 .ni{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;font-size:13px;font-weight:500;color:rgba(255,255,255,.6);margin-bottom:1px;cursor:pointer;transition:all .15s}
-.ni:hover,.ni.active{background:rgba(201,168,76,.14);color:var(--gld-l)}
+.ni:hover,.ni.active{background:rgba(137,206,209,.12);color:var(--tel)}
 .ni .ico{width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
 .sb-ft{padding:12px 14px;border-top:1px solid rgba(255,255,255,.06);font-size:10px;color:rgba(255,255,255,.28);line-height:1.7}
 .sb-ft strong{color:rgba(255,255,255,.44)}
@@ -33,7 +32,7 @@ a{text-decoration:none}
 .topbar{background:var(--card);border-bottom:1px solid var(--bdr);height:56px;padding:0 22px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;gap:12px}
 .tb-l{display:flex;align-items:center;gap:12px;min-width:0;flex:1;overflow:hidden}
 .tb-sep{width:1px;height:26px;background:var(--bdr);flex-shrink:0}
-.tb-title{font-family:'Sora',sans-serif;font-size:15px;font-weight:700;color:var(--nvy);white-space:nowrap}
+.tb-title{font-family:'Playfair Display',Georgia,serif;font-size:16px;font-weight:700;color:var(--nvy);white-space:nowrap;display:flex;align-items:center;gap:9px}
 .tb-sub{font-size:11.5px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tb-r{display:flex;align-items:center;gap:8px;flex-shrink:0}
 .badge-live{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--grn);background:rgba(60,179,113,.1);padding:5px 10px;border-radius:20px;flex-shrink:0}
@@ -42,7 +41,7 @@ a{text-decoration:none}
 .btn{display:inline-flex;align-items:center;gap:5px;padding:0 13px;height:32px;border-radius:7px;font-size:12.5px;font-weight:600;cursor:pointer;border:1.5px solid transparent;font-family:inherit;transition:all .15s;white-space:nowrap}
 .btn-ol{background:transparent;border-color:var(--bdr);color:var(--txt)}
 .btn-ol:hover{border-color:var(--nvy);color:var(--nvy)}
-.btn-gld{background:var(--gld);color:var(--nvy);border-color:var(--gld)}
+.btn-gld{background:var(--gld);color:#fff;border-color:var(--gld)}
 .btn-gld:hover{background:var(--gld-d);border-color:var(--gld-d)}
 /* Content */
 .content{padding:20px 22px 40px}
@@ -71,7 +70,7 @@ a{text-decoration:none}
 /* Card */
 .card{background:var(--card);border-radius:var(--r);padding:18px 20px;box-shadow:var(--sh);border:1px solid var(--bdr)}
 .ch{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
-.ct{font-family:'Sora',sans-serif;font-size:14px;font-weight:700;color:var(--nvy)}
+.ct{font-family:'Playfair Display',Georgia,serif;font-size:14.5px;font-weight:700;color:var(--nvy)}
 .cs{font-size:11.5px;color:var(--mut);margin-top:2px}
 /* Funnel */
 .fn-row{display:flex;align-items:center;gap:8px;margin-bottom:5px}
@@ -138,10 +137,11 @@ a{text-decoration:none}
 .srch{padding:6px 10px;border:1.5px solid var(--bdr);border-radius:7px;font-size:12px;font-family:inherit;width:148px;outline:none;background:var(--bg);color:var(--txt);transition:border-color .15s}
 .srch:focus{border-color:var(--gld);background:#fff}
 /* Password gate */
-.pw-gate{position:fixed;inset:0;background:var(--nvy);display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:14px}
+.pw-gate{position:fixed;inset:0;background:linear-gradient(160deg,#03466e 0%,#054f80 50%,#02374f 100%);display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:14px}
 .pw-gate.hide{display:none}
-.pw-ico{font-size:44px;margin-bottom:6px;line-height:1}
-.pw-gate h2{font-family:'Sora',sans-serif;font-size:20px;font-weight:700;color:#fff}
+.pw-ico{margin-bottom:10px;line-height:1}
+.pw-ico img{width:170px;height:auto;display:block}
+.pw-gate h2{font-family:'Playfair Display',Georgia,serif;font-size:22px;font-weight:700;color:#fff}
 .pw-gate p{font-size:12.5px;color:rgba(255,255,255,.4);margin-top:-6px}
 .pw-box{display:flex;gap:8px;margin-top:4px}
 .pw-in{padding:9px 14px;border-radius:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:13.5px;font-family:inherit;outline:none;width:210px}
@@ -194,9 +194,9 @@ a{text-decoration:none}
 </head><body>
 <!-- Password Gate -->
 <div class="pw-gate" id="pwGate">
-  <div class="pw-ico">&#9875;</div>
-  <h2>The Anchor Group</h2>
-  <p>Pipeline Dashboard &mdash; Owner Access</p>
+  <div class="pw-ico"><img src="logo-white.png" alt="The Anchor Group"></div>
+  <h2>Pipeline Dashboard</h2>
+  <p>Owner Access &mdash; Enter your access code below</p>
   <div class="pw-box">
     <input class="pw-in" id="pwIn" type="password" placeholder="Enter access code" onkeydown="if(event.key==='Enter')checkPw()">
     <button class="pw-btn" onclick="checkPw()">Enter</button>
@@ -208,8 +208,8 @@ a{text-decoration:none}
 <div class="sb-overlay" id="sbOverlay" onclick="closeSidebar()"></div>
 <aside class="sidebar" id="sidebar">
   <div class="sb-logo">
-    <div class="sb-icon">&#9875;</div>
-    <div class="sb-text"><h1>The Anchor Group</h1><p>Pipeline Dashboard</p></div>
+    <img src="logo-white.png" alt="The Anchor Group" class="sb-logo-img">
+    <div class="sb-logo-sub">Pipeline Dashboard</div>
   </div>
   <nav class="sb-nav">
     <div class="ns">Dashboard</div>
@@ -223,14 +223,14 @@ a{text-decoration:none}
     <a href="#readiness" class="ni"><span class="ico">&#9201;</span>Buyer Readiness</a>
     <a href="#trends" class="ni"><span class="ico">&#128197;</span>Monthly Trends</a>
   </nav>
-  <div class="sb-ft"><strong>Jun 15, 2026 Export</strong>6,021 CRM contacts &middot; 25 agents<br>Aggregated &mdash; No PII stored</div>
+  <div class="sb-ft"><strong>Jun 15, 2026 Export</strong><br>6,021 CRM contacts &middot; 25 agents<br>Aggregated &mdash; No PII stored</div>
 </aside>
 <main class="main">
 <!-- Topbar -->
 <div class="topbar">
   <div class="tb-l">
     <button class="ham" onclick="openSidebar()" aria-label="Open menu"><div class="ham-lines"><span></span><span></span><span></span></div></button>
-    <div class="tb-title">&#9875; Pipeline Review</div>
+    <div class="tb-title"><img src="logo-icon.png" alt="" style="height:28px;width:auto;display:block"> Pipeline Review</div>
     <div class="tb-sep"></div>
     <div class="tb-sub">The Anchor Group by LPT Realty &mdash; Owner View &middot; Jun 15, 2026</div>
   </div>
@@ -372,7 +372,7 @@ a{text-decoration:none}
   </div>
 </div>
 </div><!-- /content -->
-<div class="pg-ft">&#9875; The Anchor Group by LPT Realty &mdash; Pipeline Dashboard &middot; Jun 15, 2026 &middot; <strong>Aggregated metrics only. No PII displayed.</strong></div>
+<div class="pg-ft">The Anchor Group by LPT Realty &mdash; Pipeline Dashboard &middot; Jun 15, 2026 &middot; <strong>Aggregated metrics only. No PII displayed.</strong></div>
 </main>
 </div><!-- /layout --><script>
 const D={
@@ -415,7 +415,7 @@ tf:{l:['0-3 Months','3-6 Months','6-12 Months','12+ Months','No Plans'],v:[1185,
 cl:{lb:['Jan25','Feb25','Mar25','Apr25','May25','Jun25','Jul25','Aug25','Sep25','Oct25','Nov25','Dec25','Jan26','Feb26','Mar26','Apr26','May26','Jun26'],d:[2,5,8,16,17,14,19,13,15,17,22,20,12,18,14,24,26,30]},
 lk:{lb:['Jan24','Feb24','Mar24','Apr24','May24','Jun24','Jul24','Aug24','Sep24','Oct24','Nov24','Dec24','Jan25','Feb25','Mar25','Apr25','May25','Jun25','Jul25','Aug25','Sep25','Oct25','Nov25','Dec25','Jan26','Feb26','Mar26','Apr26','May26','Jun26'],d:[29,45,53,50,64,73,62,57,66,58,67,70,118,131,138,145,179,176,202,209,190,175,185,184,223,262,296,214,223,93]}
 };
-const COL=['#0D1B2A','#1E3252','#2A4F93','#4A6FA5','#2EC4B6','#1A9E92','#C9A84C','#E2C276','#4CAF50','#E05252','#F59E0B','#6B7897','#3A5F9C','#E06830','#2E7D32','#C04040','#8E44AD','#16A085','#D35400','#2980B9','#1ABC9C','#8E44AD','#E74C3C','#F39C12','#27AE60'];
+const COL=['#03466e','#157676','#89ced1','#4A6FA5','#054f80','#1A9E92','#2E7D32','#E06830','#4CAF50','#E05252','#F59E0B','#6B7897','#3A5F9C','#C04040','#16A085','#D35400','#8E44AD','#2980B9','#1ABC9C','#0e5c5c','#E74C3C','#F39C12','#27AE60','#1d9090','#6ab8bc'];
 const fm=n=>new Intl.NumberFormat('en-US').format(n);
 const fd=n=>n>=1e6?'$'+(n/1e6).toFixed(1)+'M':n>=1e3?'$'+(n/1e3).toFixed(0)+'K':'$'+fm(n);
 const ini=n=>n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
@@ -453,7 +453,7 @@ function swAnalysis(a){
 }
 
 // ── Stage Funnel ──────────────────────────────────────────────────────────────
-const fnColorMap={'s0':'#6B7897','s1':'#4A6FA5','s2':'#3A5F9C','s3':'#5B8DB8','s4':'#2EC4B6','s5':'#1A9E92','s6':'#C9A84C','s7':'#E0953A','s8':'#E06830','s9':'#C04040','s10':'#4CAF50','s11':'#2E7D32'};
+const fnColorMap={'s0':'#6B7897','s1':'#4A6FA5','s2':'#3A5F9C','s3':'#5B8DB8','s4':'#89ced1','s5':'#157676','s6':'#157676','s7':'#E0953A','s8':'#E06830','s9':'#C04040','s10':'#4CAF50','s11':'#2E7D32'};
 let fnActive=new Set(D.st.map(s=>s.n));
 
 function buildFn(){
@@ -475,7 +475,7 @@ function toggleFn(name){
 }
 
 // ── Revenue by Stage ──────────────────────────────────────────────────────────
-const revColors=['#2E7D32','#E06830','#4A6FA5','#C9A84C','#2EC4B6','#6B7897'];
+const revColors=['#2E7D32','#E06830','#4A6FA5','#157676','#89ced1','#6B7897'];
 let revActive=new Set(D.sr.l);
 let revChart=null;
 
@@ -507,7 +507,7 @@ function toggleRev(name){
 }
 
 // ── Lead Sources ──────────────────────────────────────────────────────────────
-const srcColors=['#0D1B2A','#4A6FA5','#2EC4B6','#C9A84C','#6B7897'];
+const srcColors=['#03466e','#4A6FA5','#89ced1','#157676','#6B7897'];
 let srcActive=new Set(D.ls.l);
 let srcChartInst=null;
 
@@ -540,16 +540,16 @@ function toggleSrc(name){
 
 // ── Other charts (non-filterable) ────────────────────────────────────────────
 function buildRd(){
-  new Chart(document.getElementById('rdChart'),{type:'bar',data:{labels:D.tf.l,datasets:[{data:D.tf.v,backgroundColor:['#2E7D32','#4CAF50','#C9A84C','#F59E0B','#E05252'],borderRadius:5,borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',scales:{x:{grid:{color:'rgba(0,0,0,.04)'},ticks:{font:{size:11}}},y:{grid:{display:false},ticks:{font:{size:11,family:"'DM Sans',sans-serif"}}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+fm(c.raw)+' contacts'}}}}});
+  new Chart(document.getElementById('rdChart'),{type:'bar',data:{labels:D.tf.l,datasets:[{data:D.tf.v,backgroundColor:['#2E7D32','#4CAF50','#157676','#F59E0B','#E05252'],borderRadius:5,borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',scales:{x:{grid:{color:'rgba(0,0,0,.04)'},ticks:{font:{size:11}}},y:{grid:{display:false},ticks:{font:{size:11,family:"'DM Sans',sans-serif"}}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+fm(c.raw)+' contacts'}}}}});
 }
 function buildCl(){
-  new Chart(document.getElementById('clChart'),{type:'bar',data:{labels:D.cl.lb,datasets:[{data:D.cl.d,backgroundColor:D.cl.d.map(v=>v>=25?'#2E7D32':v>=15?'#4CAF50':v>=10?'#C9A84C':'#6B7897'),borderRadius:3,borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{grid:{display:false},ticks:{font:{size:10},maxRotation:45}},y:{grid:{color:'rgba(0,0,0,.04)'},ticks:{font:{size:11},stepSize:5}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.raw+' closings'}}}}});
+  new Chart(document.getElementById('clChart'),{type:'bar',data:{labels:D.cl.lb,datasets:[{data:D.cl.d,backgroundColor:D.cl.d.map(v=>v>=25?'#2E7D32':v>=15?'#4CAF50':v>=10?'#157676':'#6B7897'),borderRadius:3,borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{grid:{display:false},ticks:{font:{size:10},maxRotation:45}},y:{grid:{color:'rgba(0,0,0,.04)'},ticks:{font:{size:11},stepSize:5}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.raw+' closings'}}}}});
 }
 function buildLk(){
   const ctx=document.getElementById('lkChart').getContext('2d');
   const g=ctx.createLinearGradient(0,0,0,210);
-  g.addColorStop(0,'rgba(46,196,182,.22)');g.addColorStop(1,'rgba(46,196,182,0)');
-  new Chart(ctx,{type:'line',data:{labels:D.lk.lb,datasets:[{data:D.lk.d,borderColor:'#2EC4B6',backgroundColor:g,borderWidth:2.5,pointRadius:2,fill:true,tension:0.4}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{grid:{display:false},ticks:{font:{size:10},maxTicksLimit:10,maxRotation:45}},y:{grid:{color:'rgba(0,0,0,.04)'},ticks:{font:{size:11}}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.raw+' new contacts'}}}}});
+  g.addColorStop(0,'rgba(137,206,209,.3)');g.addColorStop(1,'rgba(137,206,209,0)');
+  new Chart(ctx,{type:'line',data:{labels:D.lk.lb,datasets:[{data:D.lk.d,borderColor:'#89ced1',backgroundColor:g,borderWidth:2.5,pointRadius:2,fill:true,tension:0.4}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{grid:{display:false},ticks:{font:{size:10},maxTicksLimit:10,maxRotation:45}},y:{grid:{color:'rgba(0,0,0,.04)'},ticks:{font:{size:11}}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.raw+' new contacts'}}}}});
 }
 
 // ── Agent Performance Comparison ──────────────────────────────────────────────
@@ -571,7 +571,7 @@ function buildAgBar(){
   const t=allAgBarAgents.filter(a=>agBarActive.has(a.n));
   const lbl=t.map(a=>{const p=a.n.split(' ');return p[0][0]+'. '+(p[1]||'');});
   if(agBarChartInst)agBarChartInst.destroy();
-  agBarChartInst=new Chart(document.getElementById('agBarChart'),{type:'bar',data:{labels:lbl,datasets:[{label:'Active Pipeline ($M)',data:t.map(a=>+(a.apv/1e6).toFixed(2)),backgroundColor:t.map(a=>COL[D.ag.indexOf(a)%COL.length]+'CC'),borderColor:t.map(a=>COL[D.ag.indexOf(a)%COL.length]),borderWidth:1.5,yAxisID:'y',borderRadius:3},{label:'Contact Rate (%)',data:t.map(a=>a.cr),type:'line',borderColor:'#E2C276',backgroundColor:'rgba(201,168,76,.1)',borderWidth:2.5,pointRadius:4,pointBackgroundColor:'#C9A84C',yAxisID:'y1',tension:0.3}]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},scales:{y:{type:'linear',position:'left',grid:{color:'rgba(0,0,0,.04)'},ticks:{callback:v=>'$'+v+'M',font:{size:11}}},y1:{type:'linear',position:'right',min:0,max:100,grid:{drawOnChartArea:false},ticks:{callback:v=>v+'%',font:{size:11}}},x:{grid:{display:false},ticks:{font:{size:10},maxRotation:30}}},plugins:{legend:{position:'top',labels:{font:{size:11,family:"'DM Sans',sans-serif"},boxWidth:12,padding:12}}}}});
+  agBarChartInst=new Chart(document.getElementById('agBarChart'),{type:'bar',data:{labels:lbl,datasets:[{label:'Active Pipeline ($M)',data:t.map(a=>+(a.apv/1e6).toFixed(2)),backgroundColor:t.map(a=>COL[D.ag.indexOf(a)%COL.length]+'CC'),borderColor:t.map(a=>COL[D.ag.indexOf(a)%COL.length]),borderWidth:1.5,yAxisID:'y',borderRadius:3},{label:'Contact Rate (%)',data:t.map(a=>a.cr),type:'line',borderColor:'#89ced1',backgroundColor:'rgba(137,206,209,.1)',borderWidth:2.5,pointRadius:4,pointBackgroundColor:'#89ced1',yAxisID:'y1',tension:0.3}]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},scales:{y:{type:'linear',position:'left',grid:{color:'rgba(0,0,0,.04)'},ticks:{callback:v=>'$'+v+'M',font:{size:11}}},y1:{type:'linear',position:'right',min:0,max:100,grid:{drawOnChartArea:false},ticks:{callback:v=>v+'%',font:{size:11}}},x:{grid:{display:false},ticks:{font:{size:10},maxRotation:30}}},plugins:{legend:{position:'top',labels:{font:{size:11,family:"'DM Sans',sans-serif"},boxWidth:12,padding:12}}}}});
 }
 
 function toggleAgBar(name){
