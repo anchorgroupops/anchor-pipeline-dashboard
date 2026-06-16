@@ -11,21 +11,22 @@
 <style>
 :root{--nvy:#03466e;--nvy-l:#054f80;--gld:#157676;--gld-l:#1d9090;--gld-d:#0e5c5c;--tel:#89ced1;--tel-d:#6ab8bc;--red:#E05252;--grn:#3CB371;--amb:#F59E0B;--bg:#EFF4F7;--card:#fff;--txt:#1A2540;--mut:#64748B;--bdr:#dde6ec;--sh:0 1px 3px rgba(0,0,0,.04),0 4px 14px rgba(3,70,110,.08);--r:12px;--sbw:240px}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'DM Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--txt);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+body{font-family:'DM Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);background-image:radial-gradient(ellipse at 80% 0%,rgba(137,206,209,.12) 0%,transparent 60%);color:var(--txt);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
 a{text-decoration:none}
 /* Sidebar */
 .layout{display:flex;min-height:100vh}
 .sidebar{width:var(--sbw);background:var(--nvy);flex-shrink:0;position:fixed;height:100vh;overflow-y:auto;display:flex;flex-direction:column;z-index:200}
-.sb-logo{padding:18px 20px 16px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;flex-direction:column;align-items:center;gap:6px}
-.sb-logo-img{width:148px;height:auto;display:block}
-.sb-logo-sub{font-size:9.5px;font-weight:600;color:rgba(255,255,255,.32);letter-spacing:1.2px;text-transform:uppercase;text-align:center}
+.sb-logo{border-bottom:1px solid rgba(255,255,255,.1);display:flex;flex-direction:column;align-items:stretch;overflow:hidden}
+.sb-logo-img{width:100%;height:auto;display:block;opacity:.96}
+.sb-logo-sub{font-size:9px;font-weight:700;color:rgba(255,255,255,.35);letter-spacing:1.8px;text-transform:uppercase;text-align:center;padding:7px 14px 9px;background:rgba(0,0,0,.15)}
 .sb-nav{padding:10px 8px;flex:1}
 .ns{font-size:9.5px;font-weight:700;color:rgba(255,255,255,.27);text-transform:uppercase;letter-spacing:1.2px;padding:10px 8px 5px}
 .ni{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;font-size:13px;font-weight:500;color:rgba(255,255,255,.6);margin-bottom:1px;cursor:pointer;transition:all .15s}
 .ni:hover,.ni.active{background:rgba(137,206,209,.12);color:var(--tel)}
 .ni .ico{width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
-.sb-ft{padding:12px 14px;border-top:1px solid rgba(255,255,255,.06);font-size:10px;color:rgba(255,255,255,.28);line-height:1.7}
-.sb-ft strong{color:rgba(255,255,255,.44)}
+.sb-wave{display:block;width:100%;opacity:.12;margin-top:auto}
+.sb-ft{padding:10px 14px 12px;border-top:1px solid rgba(255,255,255,.06);font-size:10px;color:rgba(255,255,255,.28);line-height:1.8}
+.sb-ft strong{color:rgba(255,255,255,.5);display:block;margin-bottom:1px}
 /* Main */
 .main{margin-left:var(--sbw);flex:1;min-width:0}
 /* Topbar */
@@ -137,12 +138,15 @@ a{text-decoration:none}
 .srch{padding:6px 10px;border:1.5px solid var(--bdr);border-radius:7px;font-size:12px;font-family:inherit;width:148px;outline:none;background:var(--bg);color:var(--txt);transition:border-color .15s}
 .srch:focus{border-color:var(--gld);background:#fff}
 /* Password gate */
-.pw-gate{position:fixed;inset:0;background:linear-gradient(160deg,#03466e 0%,#054f80 50%,#02374f 100%);display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:14px}
+.pw-gate{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:0;overflow:hidden}
+.pw-gate::before{content:'';position:absolute;inset:0;background:linear-gradient(160deg,#012b45 0%,#03466e 30%,#157676 65%,#89ced1 100%);z-index:0}
+.pw-gate::after{content:'';position:absolute;bottom:0;left:0;right:0;height:45%;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='rgba(255,255,255,0.04)' d='M0,192L48,181.3C96,171,192,149,288,160C384,171,480,213,576,218.7C672,224,768,192,864,181.3C960,171,1056,181,1152,192C1248,203,1344,213,1392,218.7L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E") bottom/cover no-repeat;z-index:0}
 .pw-gate.hide{display:none}
-.pw-ico{margin-bottom:10px;line-height:1}
-.pw-ico img{width:170px;height:auto;display:block}
-.pw-gate h2{font-family:'Playfair Display',Georgia,serif;font-size:22px;font-weight:700;color:#fff}
-.pw-gate p{font-size:12.5px;color:rgba(255,255,255,.4);margin-top:-6px}
+.pw-card{position:relative;z-index:1;background:rgba(255,255,255,.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:36px 40px 32px;display:flex;flex-direction:column;align-items:center;gap:14px;max-width:380px;width:90%;box-shadow:0 24px 60px rgba(1,25,40,.4)}
+.pw-ico{line-height:1;margin-bottom:4px}
+.pw-ico img{width:220px;height:auto;display:block}
+.pw-gate h2{font-family:'Playfair Display',Georgia,serif;font-size:22px;font-weight:700;color:#fff;margin:0}
+.pw-gate p{font-size:12px;color:rgba(255,255,255,.5);margin-top:-8px}
 .pw-box{display:flex;gap:8px;margin-top:4px}
 .pw-in{padding:9px 14px;border-radius:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:13.5px;font-family:inherit;outline:none;width:210px}
 .pw-in::placeholder{color:rgba(255,255,255,.3)}
@@ -194,21 +198,23 @@ a{text-decoration:none}
 </head><body>
 <!-- Password Gate -->
 <div class="pw-gate" id="pwGate">
-  <div class="pw-ico"><img src="logo-white.png" alt="The Anchor Group"></div>
-  <h2>Pipeline Dashboard</h2>
-  <p>Owner Access &mdash; Enter your access code below</p>
-  <div class="pw-box">
-    <input class="pw-in" id="pwIn" type="password" placeholder="Enter access code" onkeydown="if(event.key==='Enter')checkPw()">
-    <button class="pw-btn" onclick="checkPw()">Enter</button>
+  <div class="pw-card">
+    <div class="pw-ico"><img src="header.jpg" alt="The Anchor Group" style="border-radius:10px;width:260px"></div>
+    <h2>Pipeline Dashboard</h2>
+    <p>Owner Access &mdash; Enter your access code below</p>
+    <div class="pw-box">
+      <input class="pw-in" id="pwIn" type="password" placeholder="Enter access code" onkeydown="if(event.key==='Enter')checkPw()">
+      <button class="pw-btn" onclick="checkPw()">Enter</button>
+    </div>
+    <div class="pw-err" id="pwErr">Incorrect access code. Try again.</div>
   </div>
-  <div class="pw-err" id="pwErr">Incorrect access code. Try again.</div>
 </div>
 <!-- Dashboard Layout -->
 <div class="layout" id="dash" style="display:none">
 <div class="sb-overlay" id="sbOverlay" onclick="closeSidebar()"></div>
 <aside class="sidebar" id="sidebar">
   <div class="sb-logo">
-    <img src="logo-white.png" alt="The Anchor Group" class="sb-logo-img">
+    <img src="header.jpg" alt="The Anchor Group by LPT Realty" class="sb-logo-img">
     <div class="sb-logo-sub">Pipeline Dashboard</div>
   </div>
   <nav class="sb-nav">
@@ -223,14 +229,15 @@ a{text-decoration:none}
     <a href="#readiness" class="ni"><span class="ico">&#9201;</span>Buyer Readiness</a>
     <a href="#trends" class="ni"><span class="ico">&#128197;</span>Monthly Trends</a>
   </nav>
-  <div class="sb-ft"><strong>Jun 15, 2026 Export</strong><br>6,021 CRM contacts &middot; 25 agents<br>Aggregated &mdash; No PII stored</div>
+  <svg class="sb-wave" viewBox="0 0 240 28" xmlns="http://www.w3.org/2000/svg"><path fill="#89ced1" d="M0,14 C40,28 80,0 120,14 C160,28 200,0 240,14 L240,28 L0,28 Z"/></svg>
+  <div class="sb-ft"><strong>Jun 15, 2026 Export</strong>6,021 contacts &middot; 25 agents<br>Aggregated &mdash; No PII stored</div>
 </aside>
 <main class="main">
 <!-- Topbar -->
 <div class="topbar">
   <div class="tb-l">
     <button class="ham" onclick="openSidebar()" aria-label="Open menu"><div class="ham-lines"><span></span><span></span><span></span></div></button>
-    <div class="tb-title"><img src="logo-icon.png" alt="" style="height:28px;width:auto;display:block"> Pipeline Review</div>
+    <div class="tb-title"><img src="logo-icon.png" alt="" style="height:30px;width:auto;display:block;filter:drop-shadow(0 1px 2px rgba(3,70,110,.15))"> Pipeline Review</div>
     <div class="tb-sep"></div>
     <div class="tb-sub">The Anchor Group by LPT Realty &mdash; Owner View &middot; Jun 15, 2026</div>
   </div>
