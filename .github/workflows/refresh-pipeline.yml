@@ -1,0 +1,40 @@
+name: Refresh Pipeline Data
+
+on:
+  schedule:
+    - cron: '0 11 * * *'  # 6 AM ET (11:00 UTC covers both EST UTC-5 and EDT UTC-4)
+  workflow_dispatch:       # also triggerable manually from the Actions tab
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write      # required to push the updated index.html
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Fetch FUB data and rebuild dashboard
+        env:
+          FUB_API_KEY: ${{ secrets.FUB_API_KEY }}
+          # Add key at: github.com/anchorgroupops/anchor-pipeline-dashboard
+          #             → Settings → Secrets → Actions → New repository secret
+        run: node scripts/fub-refresh.mjs
+
+      - name: Commit refreshed index.html (if data changed)
+        run: |
+          git config user.name  "pipeline-bot"
+          git config user.email "actions@github.com"
+          git add index.html
+          if git diff --staged --quiet; then
+            echo "No data changes — skipping commit"
+          else
+            git commit -m "chore: auto-refresh pipeline data [skip ci]"
+            git push
+          fi
