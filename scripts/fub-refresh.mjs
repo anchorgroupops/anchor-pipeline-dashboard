@@ -14,6 +14,7 @@
 import fs   from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { rollingMonths } from './rolling-months.mjs';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -166,19 +167,6 @@ function buildD({ stageCounts, stageRevenue, agentMap, sourceMap, tfMap, clMap, 
   for (const [l, v] of Object.entries(tfMap))
     if (!TF_ORDER.includes(l)) { tfL.push(l); tfV.push(v); }
 
-  // Rolling month windows — always relative to run date
-  function rollingMonths(count) {
-    const now = new Date();
-    const labels = [], keys = [];
-    for (let i = count - 1; i >= 0; i--) {
-      const d   = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - i, 1));
-      const key = `${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,'0')}`;
-      const lbl = d.toLocaleString('en-US', { month:'short', timeZone:'UTC' }).slice(0,3)
-                + String(d.getUTCFullYear()).slice(2);
-      keys.push(key); labels.push(lbl);
-    }
-    return { labels, keys };
-  }
   const cl18 = rollingMonths(18);
   const lk30 = rollingMonths(30);
 
