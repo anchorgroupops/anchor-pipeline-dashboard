@@ -192,8 +192,9 @@ function updateHtml(D, totalPeople) {
   // First run: auto-inject sentinel markers around existing const D={...} block
   if (!html.includes(START) || !html.includes(END)) {
     console.error('DATA markers not found — injecting for first time...');
-    html = html.replace('<script>\nconst D=', `<script>\n${START}\nconst D=`);
-    html = html.replace('\n};\nconst COL=',  `\n};\n${END}\nconst COL=`);
+    // index.html is committed with CRLF endings, so match either flavour.
+    html = html.replace(/<script>(\r?\n)const D=/, `<script>$1${START}$1const D=`);
+    html = html.replace(/(\r?\n)\};(\r?\n)const COL=/, `$1};$2${END}$2const COL=`);
     if (!html.includes(START)) throw new Error('Auto-inject failed: DATA_START not found after substitution');
     if (!html.includes(END))   throw new Error('Auto-inject failed: DATA_END not found after substitution');
   }
