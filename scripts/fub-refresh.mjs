@@ -37,8 +37,8 @@ const SR_STAGES   = ['Closed', 'Under Contract', 'Nurture', 'Active Listing', 'S
 const TF_ORDER    = ['0-3 Months', '3-6 Months', '6-12 Months', '12+ Months', 'No Plans'];
 
 // ─── FUB API ──────────────────────────────────────────────────────────────────
-async function fubGet(endpoint) {
-  const res = await fetch(FUB_BASE + endpoint, { headers: HEADERS });
+async function fubGet(url) {
+  const res = await fetch(url, { headers: HEADERS });
   if (!res.ok) {
     const body = await res.text().catch(() => '');
     throw new Error(`FUB API ${res.status}: ${body.slice(0, 300)}`);
@@ -48,17 +48,18 @@ async function fubGet(endpoint) {
 
 async function fetchAllPeople() {
   const all = [];
-  let offset = 0;
   const limit = 100;
-  while (true) {
-    const data  = await fubGet(`/people?limit=${limit}&offset=${offset}&sort=id`);
+  // FUB disables offset pagination past a few thousand records; follow the
+  // cursor in _metadata.nextLink instead. It is an absolute URL, null at the end.
+  let url = `${FUB_BASE}/people?limit=${limit}&sort=id`;
+  while (url) {
+    const data  = await fubGet(url);
     const batch = data.people ?? [];
     all.push(...batch);
     const total = data._metadata?.total ?? '?';
     process.stderr.write(`  people: ${all.length}/${total}    \r`);
-    if (batch.length < limit) break;
-    offset += limit;
-    await new Promise(r => setTimeout(r, 120)); // ~8 req/s — FUB allows 25 req/s burst
+    url = batch.length ? (data._metadata?.nextLink ?? null) : null;
+    if (url) await new Promise(r => setTimeout(r, 120)); // ~8 req/s — FUB allows 25 req/s burst
   }
   console.error(`\nFetched ${all.length} total people`);
   return all;
