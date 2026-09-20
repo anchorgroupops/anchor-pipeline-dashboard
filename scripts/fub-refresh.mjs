@@ -14,7 +14,7 @@
 import fs   from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { rollingMonths } from './rolling-months.mjs';
+import { rollingMonths, monthKey } from './rolling-months.mjs';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -83,7 +83,7 @@ function aggregate(people) {
     const source    = (p.source ?? 'Unknown').trim() || 'Unknown';
     const contacted = p.contacted === true;
     const tf        = getCustomField(p, 'Timeframe') ?? getCustomField(p, 'Purchase Timeframe');
-    const createdYM = p.createdAt   ? p.createdAt.slice(0, 7)   : null;  // YYYY-MM
+    const createdYM = monthKey(p.createdAt);                              // YYYY-MM (ET)
     const closeYM   = p.closingDate ? p.closingDate.slice(0, 7) : null;
 
     // Global tallies
