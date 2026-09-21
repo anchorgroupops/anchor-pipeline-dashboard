@@ -38,3 +38,29 @@ export function rollingMonths(count, referenceDate = new Date()) {
   }
   return { labels, keys };
 }
+
+/**
+ * The YYYY-MM bucket key for a single FUB timestamp, in the same
+ * America/New_York calendar month rollingMonths() keys its buckets by.
+ *
+ * FUB returns createdAt as a UTC instant, so slicing YYYY-MM off it straight
+ * files anything created after 19:00/20:00 ET into next month — and drops it
+ * entirely when the newest ET bucket has not rolled over yet. Date-only
+ * fields (closingDate) carry no instant to convert and are already local, so
+ * they are sliced as-is.
+ */
+export function monthKey(value) {
+  if (!value) return null;
+  if (!String(value).includes('T')) return String(value).slice(0, 7);
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return null;
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/New_York',
+    year: 'numeric',
+    month: '2-digit',
+  }).formatToParts(d).reduce((acc, p) => {
+    acc[p.type] = p.value;
+    return acc;
+  }, {});
+  return `${parts.year}-${parts.month}`;
+}
